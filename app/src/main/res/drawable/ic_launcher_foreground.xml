@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Outer Shield / Diamond Frame (Governance & Advisory) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#00B4D8"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M54,28 L78,44 L78,66 L54,82 L30,66 L30,44 Z" />
+
+    <!-- Bar 1: Accounting (Teal) -->
+    <path
+        android:fillColor="#00B4D8"
+        android:pathData="M40,58 h6 v14 h-6 z" />
+
+    <!-- Bar 2: Tax & Control (Teal Accent) -->
+    <path
+        android:fillColor="#90E0EF"
+        android:pathData="M51,48 h6 v24 h-6 z" />
+
+    <!-- Bar 3: Growth & Audit (Golden Amber) -->
+    <path
+        android:fillColor="#E9C46A"
+        android:pathData="M62,38 h6 v34 h-6 z" />
+
+    <!-- Top Sparkle / Verification Check Star (Gold) -->
+    <path
+        android:fillColor="#E9C46A"
+        android:pathData="M54,33 L55.5,37.5 L60,39 L55.5,40.5 L54,45 L52.5,40.5 L48,39 L52.5,37.5 Z" />
+
+    <!-- Growth Trendline Arrow -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M38,62 L48,52 L56,56 L68,42" />
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M68,42 L63,43 L67,48 Z" />
+
+</vector>
