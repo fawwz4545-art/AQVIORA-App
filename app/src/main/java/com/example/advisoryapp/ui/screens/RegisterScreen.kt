@@ -37,7 +37,6 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -131,7 +130,7 @@ fun RegisterScreen(
                     value = fullNameInput,
                     onValueChange = { fullNameInput = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Budi Hendrawan") },
+                    placeholder = { Text("Contoh: Nama Lengkap Anda") },
                     leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                     shape = RoundedCornerShape(10.dp)
                 )
@@ -144,7 +143,7 @@ fun RegisterScreen(
                     value = companyInput,
                     onValueChange = { companyInput = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("PT Mandiri Sejahtera") },
+                    placeholder = { Text("Contoh: PT Nama Perusahaan Anda") },
                     leadingIcon = { Icon(Icons.Default.Business, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                     shape = RoundedCornerShape(10.dp)
                 )
@@ -157,7 +156,7 @@ fun RegisterScreen(
                     value = emailInput,
                     onValueChange = { emailInput = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("budi@mandiri.co.id") },
+                    placeholder = { Text("Contoh: nama@emailperusahaan.com") },
                     leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                     shape = RoundedCornerShape(10.dp)
                 )
@@ -170,7 +169,7 @@ fun RegisterScreen(
                     value = phoneInput,
                     onValueChange = { phoneInput = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("081234567890") },
+                    placeholder = { Text("Contoh: 0812xxxxxxxx") },
                     leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                     shape = RoundedCornerShape(10.dp)
                 )
@@ -204,7 +203,7 @@ fun RegisterScreen(
                     value = passwordInput,
                     onValueChange = { passwordInput = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("••••••••") },
+                    placeholder = { Text("Buat Kata Sandi Akun") },
                     leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                     visualTransformation = PasswordVisualTransformation(),
                     shape = RoundedCornerShape(10.dp)
