@@ -62,8 +62,8 @@ fun LoginScreen(
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
-    var emailInput by remember { mutableStateOf("budi@mandirisejahtera.co.id") }
-    var passwordInput by remember { mutableStateOf("password123") }
+    var emailInput by remember { mutableStateOf("") }
+    var passwordInput by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(true) }
     var isLoading by remember { mutableStateOf(false) }
