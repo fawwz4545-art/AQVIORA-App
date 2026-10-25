@@ -29,8 +29,8 @@ class AdvisoryViewModel(
     val documents: StateFlow<List<DocumentItem>> = repository.documents
     val invoices: StateFlow<List<InvoiceItem>> = repository.invoices
 
-    fun login(email: String, pass: String): Boolean {
-        return repository.loginUser(email, pass)
+    suspend fun login(email: String, pass: String): Boolean {
+        return repository.loginUserOnline(email, pass)
     }
 
     fun register(

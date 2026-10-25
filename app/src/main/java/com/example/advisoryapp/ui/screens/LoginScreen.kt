@@ -29,6 +29,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -40,17 +41,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.advisoryapp.ui.AdvisoryViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -59,10 +61,12 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val coroutineScope = rememberCoroutineScope()
     var emailInput by remember { mutableStateOf("budi@mandirisejahtera.co.id") }
     var passwordInput by remember { mutableStateOf("password123") }
     var passwordVisible by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(true) }
+    var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     Column(
@@ -207,23 +211,39 @@ fun LoginScreen(
                 Button(
                     onClick = {
                         if (emailInput.isNotBlank() && passwordInput.isNotBlank()) {
-                            val success = viewModel.login(emailInput, passwordInput)
-                            if (success) {
-                                onLoginSuccess()
-                            } else {
-                                errorMessage = "Email atau kata sandi tidak valid."
+                            isLoading = true
+                            errorMessage = null
+                            coroutineScope.launch {
+                                val success = viewModel.login(emailInput, passwordInput)
+                                isLoading = false
+                                if (success) {
+                                    onLoginSuccess()
+                                } else {
+                                    errorMessage = "Email belum terdaftar di Supabase Cloud. Silakan buat akun baru."
+                                }
                             }
                         } else {
                             errorMessage = "Mohon isi semua kolom email dan kata sandi."
                         }
                     },
+                    enabled = !isLoading,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp)
                 ) {
-                    Text("Masuk ke Portal Advisory", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            strokeWidth = 2.dp
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Memverifikasi ke Supabase...", fontSize = 13.sp)
+                    } else {
+                        Text("Masuk ke Portal Advisory", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    }
                 }
             }
         }

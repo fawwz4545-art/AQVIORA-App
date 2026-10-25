@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -452,20 +453,36 @@ class AdvisoryRepository {
         }
     }
 
-    // Auth Actions
+    // Auth Actions: Pure Supabase Cloud Verification
 
-    fun loginUser(email: String, pass: String): Boolean {
+    suspend fun loginUserOnline(email: String, pass: String): Boolean = withContext(Dispatchers.IO) {
         val trimmedEmail = email.trim()
-        if (trimmedEmail.isNotBlank() && pass.isNotBlank()) {
-            // Find registered user by email
-            val matchedUser = _registeredUsers.find { it.email.equals(trimmedEmail, ignoreCase = true) }
-            if (matchedUser != null) {
-                _currentUser.value = matchedUser
+        if (trimmedEmail.isBlank() || pass.isBlank()) return@withContext false
+
+        try {
+            // 1. Query Supabase directly for user with this email
+            val jsonUsers = SupabaseClient.get("users", "email=eq.$trimmedEmail")
+            if (jsonUsers.length() > 0) {
+                val userObj = jsonUsers.getJSONObject(0)
+                val profile = UserProfile(
+                    id = userObj.optString("id", "usr-${System.currentTimeMillis()}"),
+                    fullName = userObj.optString("full_name", "Pengguna Advisory"),
+                    companyName = userObj.optString("company_name", "Perusahaan Anda"),
+                    email = userObj.optString("email", trimmedEmail),
+                    phone = userObj.optString("phone", ""),
+                    industry = userObj.optString("industry", "Umum")
+                )
+                _currentUser.value = profile
                 _isLoggedIn.value = true
-                return true
+                true
+            } else {
+                // Email not found in Supabase!
+                false
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
-        return false
     }
 
     fun registerUser(
