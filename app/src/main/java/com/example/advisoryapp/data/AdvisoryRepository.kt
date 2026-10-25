@@ -96,7 +96,94 @@ class AdvisoryRepository {
             )
         )
 
-        // Initial Health Diagnostic Results
+        // Initial Experts
+        _experts.value = listOf(
+            Expert(
+                id = "exp-1",
+                name = "Budi Santoso, SE, Ak, CA, BKP",
+                title = "Senior Tax & Accounting Advisory Specialist",
+                primaryPillar = PillarType.TAX,
+                secondaryPillars = listOf(PillarType.ACCOUNTING, PillarType.FINANCE),
+                yearsExperience = 15,
+                rating = 4.9,
+                reviewCount = 128,
+                bio = "Mantan Auditor Big 4 & Konsultan Pajak Terdaftar (BKP C). Berpengalaman mendampingi 200+ perusahaan manufaktur, retail & jasa.",
+                certifications = listOf("BKP C (Konsultan Pajak)", "CA (Chartered Accountant)", "Certified Tax Advisor"),
+                hourlyRate = 500000.0
+            ),
+            Expert(
+                id = "exp-2",
+                name = "Siti Rahmawati, M.Ak, CMA",
+                title = "Costing & Budgeting Advisory Specialist",
+                primaryPillar = PillarType.COSTING,
+                secondaryPillars = listOf(PillarType.BUDGETING, PillarType.FINANCE),
+                yearsExperience = 12,
+                rating = 4.85,
+                reviewCount = 94,
+                bio = "Praktisi Manajemen Biaya & Anggaran Sektor Manufaktur, Kuliner (F&B) dan Distribusi. Ahli penyusunan HPP & Variance Analysis.",
+                certifications = listOf("CMA (Certified Management Accountant)", "Certified Budget Professional"),
+                hourlyRate = 450000.0
+            ),
+            Expert(
+                id = "exp-3",
+                name = "Hendrik Wijaya, SE, CIA, CRMA",
+                title = "Internal Control & Internal Audit Advisor",
+                primaryPillar = PillarType.INTERNAL_CONTROL,
+                secondaryPillars = listOf(PillarType.INTERNAL_AUDIT, PillarType.RISK_MANAGEMENT),
+                yearsExperience = 16,
+                rating = 4.95,
+                reviewCount = 110,
+                bio = "Spesialis Pengendalian Internal, Pencegahan Fraud, SOP & Internal Audit. Pengalaman memimpin tim audit di holding group ternama.",
+                certifications = listOf("CIA (Certified Internal Auditor)", "CRMA (Risk Management Assurance)"),
+                hourlyRate = 550000.0
+            ),
+            Expert(
+                id = "exp-4",
+                name = "Diana Putri, M.Sc, CFA",
+                title = "Financial Analysis & Corporate Advisory",
+                primaryPillar = PillarType.FINANCE,
+                secondaryPillars = listOf(PillarType.BUDGETING, PillarType.RISK_MANAGEMENT),
+                yearsExperience = 10,
+                rating = 4.8,
+                reviewCount = 76,
+                bio = "Ahli Financial Advisory, Cash Flow Optimization, & Restrukturisasi Modal Kerja untuk UMKM dan Bisnis Skala Menengah.",
+                certifications = listOf("CFA Charterholder", "Financial Modeling Specialist"),
+                hourlyRate = 400000.0
+            )
+        )
+
+        loadDataForUser(_currentUser.value)
+    }
+
+    private fun loadDataForUser(user: UserProfile?) {
+        if (user == null) {
+            _healthResults.value = emptyList()
+            _actionItems.value = emptyList()
+            _projects.value = emptyList()
+            _documents.value = emptyList()
+            _invoices.value = emptyList()
+            _bookings.value = emptyList()
+            return
+        }
+
+        if (user.id == "usr-1") {
+            // Demo account: Load sample presentation dataset
+            loadDemoDataset()
+        } else {
+            // Brand new registered account: Clear old demo cache!
+            _healthResults.value = emptyList()
+            _actionItems.value = emptyList()
+            _projects.value = emptyList()
+            _documents.value = emptyList()
+            _invoices.value = emptyList()
+            _bookings.value = emptyList()
+
+            // Fetch user specific data from Supabase
+            fetchUserDataFromSupabase(user.id)
+        }
+    }
+
+    private fun loadDemoDataset() {
         _healthResults.value = listOf(
             HealthResult(
                 pillar = PillarType.ACCOUNTING,
@@ -156,63 +243,6 @@ class AdvisoryRepository {
             )
         )
 
-        // Experts
-        _experts.value = listOf(
-            Expert(
-                id = "exp-1",
-                name = "Budi Santoso, SE, Ak, CA, BKP",
-                title = "Senior Tax & Accounting Advisory Specialist",
-                primaryPillar = PillarType.TAX,
-                secondaryPillars = listOf(PillarType.ACCOUNTING, PillarType.FINANCE),
-                yearsExperience = 15,
-                rating = 4.9,
-                reviewCount = 128,
-                bio = "Mantan Auditor Big 4 & Konsultan Pajak Terdaftar (BKP C). Berpengalaman mendampingi 200+ perusahaan manufaktur, retail & jasa.",
-                certifications = listOf("BKP C (Konsultan Pajak)", "CA (Chartered Accountant)", "Certified Tax Advisor"),
-                hourlyRate = 500000.0
-            ),
-            Expert(
-                id = "exp-2",
-                name = "Siti Rahmawati, M.Ak, CMA",
-                title = "Costing & Budgeting Advisory Specialist",
-                primaryPillar = PillarType.COSTING,
-                secondaryPillars = listOf(PillarType.BUDGETING, PillarType.FINANCE),
-                yearsExperience = 12,
-                rating = 4.85,
-                reviewCount = 94,
-                bio = "Praktisi Manajemen Biaya & Anggaran Sektor Manufaktur, Kuliner (F&B) dan Distribusi. Ahli penyusunan HPP & Variance Analysis.",
-                certifications = listOf("CMA (Certified Management Accountant)", "Certified Budget Professional"),
-                hourlyRate = 450000.0
-            ),
-            Expert(
-                id = "exp-3",
-                name = "Hendrik Wijaya, SE, CIA, CRMA",
-                title = "Internal Control & Internal Audit Advisor",
-                primaryPillar = PillarType.INTERNAL_CONTROL,
-                secondaryPillars = listOf(PillarType.INTERNAL_AUDIT, PillarType.RISK_MANAGEMENT),
-                yearsExperience = 16,
-                rating = 4.95,
-                reviewCount = 110,
-                bio = "Spesialis Pengendalian Internal, Pencegahan Fraud, SOP & Internal Audit. Pengalaman memimpin tim audit di holding group ternama.",
-                certifications = listOf("CIA (Certified Internal Auditor)", "CRMA (Risk Management Assurance)"),
-                hourlyRate = 550000.0
-            ),
-            Expert(
-                id = "exp-4",
-                name = "Diana Putri, M.Sc, CFA",
-                title = "Financial Analysis & Corporate Advisory",
-                primaryPillar = PillarType.FINANCE,
-                secondaryPillars = listOf(PillarType.BUDGETING, PillarType.RISK_MANAGEMENT),
-                yearsExperience = 10,
-                rating = 4.8,
-                reviewCount = 76,
-                bio = "Ahli Financial Advisory, Cash Flow Optimization, & Restrukturisasi Modal Kerja untuk UMKM dan Bisnis Skala Menengah.",
-                certifications = listOf("CFA Charterholder", "Financial Modeling Specialist"),
-                hourlyRate = 400000.0
-            )
-        )
-
-        // Action Items
         _actionItems.value = listOf(
             ActionItem(
                 id = "act-1",
@@ -252,7 +282,6 @@ class AdvisoryRepository {
             )
         )
 
-        // Active Projects
         _projects.value = listOf(
             ClientProject(
                 id = "prj-1",
@@ -292,7 +321,6 @@ class AdvisoryRepository {
             )
         )
 
-        // Documents
         _documents.value = listOf(
             DocumentItem(
                 id = "doc-1",
@@ -323,7 +351,6 @@ class AdvisoryRepository {
             )
         )
 
-        // Invoices
         _invoices.value = listOf(
             InvoiceItem(
                 id = "inv-1",
@@ -355,6 +382,36 @@ class AdvisoryRepository {
         )
     }
 
+    private fun fetchUserDataFromSupabase(userId: String) {
+        repositoryScope.launch {
+            try {
+                // Fetch User Bookings from Supabase
+                val jsonBookings = SupabaseClient.get("booking_requests", "user_id=eq.$userId")
+                if (jsonBookings.length() > 0) {
+                    val fetchedBookings = mutableListOf<BookingRequest>()
+                    for (i in 0 until jsonBookings.length()) {
+                        val obj = jsonBookings.getJSONObject(i)
+                        fetchedBookings.add(
+                            BookingRequest(
+                                id = obj.optString("id", "bk-$i"),
+                                expertId = obj.optString("expert_id", "exp-1"),
+                                expertName = obj.optString("expert_name", "Expert Specialist"),
+                                date = obj.optString("booking_date", "Hari ini"),
+                                timeSlot = obj.optString("time_slot", "10:00 WIB"),
+                                clientTopic = obj.optString("client_topic", "Konsultasi Advisory"),
+                                durationMinutes = obj.optInt("duration_minutes", 60),
+                                status = obj.optString("status", "Scheduled")
+                            )
+                        )
+                    }
+                    _bookings.value = fetchedBookings
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     private fun syncWithSupabase() {
         repositoryScope.launch {
             try {
@@ -375,18 +432,6 @@ class AdvisoryRepository {
                             _registeredUsers.add(fetchedUser)
                         }
                     }
-                }
-
-                // Ensure current user is in Supabase
-                _currentUser.value?.let { user ->
-                    val userJson = JSONObject()
-                    userJson.put("id", user.id)
-                    userJson.put("full_name", user.fullName)
-                    userJson.put("company_name", user.companyName)
-                    userJson.put("email", user.email)
-                    userJson.put("phone", user.phone)
-                    userJson.put("industry", user.industry)
-                    SupabaseClient.post("users", userJson)
                 }
 
                 // 2. Sync Experts from Supabase
@@ -425,28 +470,6 @@ class AdvisoryRepository {
                     }
                     _experts.value = fetchedExperts
                 }
-
-                // 3. Sync Bookings from Supabase
-                val jsonBookings = SupabaseClient.get("booking_requests")
-                if (jsonBookings.length() > 0) {
-                    val fetchedBookings = mutableListOf<BookingRequest>()
-                    for (i in 0 until jsonBookings.length()) {
-                        val obj = jsonBookings.getJSONObject(i)
-                        fetchedBookings.add(
-                            BookingRequest(
-                                id = obj.optString("id", "bk-$i"),
-                                expertId = obj.optString("expert_id", "exp-1"),
-                                expertName = obj.optString("expert_name", "Expert Specialist"),
-                                date = obj.optString("booking_date", "Hari ini"),
-                                timeSlot = obj.optString("time_slot", "10:00 WIB"),
-                                clientTopic = obj.optString("client_topic", "Konsultasi Advisory"),
-                                durationMinutes = obj.optInt("duration_minutes", 60),
-                                status = obj.optString("status", "Scheduled")
-                            )
-                        )
-                    }
-                    _bookings.value = fetchedBookings
-                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -474,6 +497,7 @@ class AdvisoryRepository {
                 )
                 _currentUser.value = profile
                 _isLoggedIn.value = true
+                loadDataForUser(profile)
                 true
             } else {
                 // Email not found in Supabase!
@@ -505,6 +529,7 @@ class AdvisoryRepository {
             _registeredUsers.add(profile)
             _currentUser.value = profile
             _isLoggedIn.value = true
+            loadDataForUser(profile)
 
             // Sync user to Supabase
             repositoryScope.launch {
@@ -529,6 +554,7 @@ class AdvisoryRepository {
     fun logout() {
         _isLoggedIn.value = false
         _currentUser.value = null
+        loadDataForUser(null)
     }
 
     // Interactive Actions
@@ -567,7 +593,6 @@ class AdvisoryRepository {
         repositoryScope.launch {
             try {
                 val currentUserId = _currentUser.value?.id ?: "usr-1"
-                // Ensure user exists first
                 _currentUser.value?.let { user ->
                     val userJson = JSONObject()
                     userJson.put("id", user.id)
@@ -626,7 +651,6 @@ class AdvisoryRepository {
         repositoryScope.launch {
             try {
                 val currentUserId = _currentUser.value?.id ?: "usr-1"
-                // Ensure user exists in Supabase users table first to prevent FK constraint error!
                 _currentUser.value?.let { user ->
                     val userJson = JSONObject()
                     userJson.put("id", user.id)
