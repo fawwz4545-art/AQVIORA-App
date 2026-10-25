@@ -1,5 +1,6 @@
 package com.example.advisoryapp.data
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -12,6 +13,7 @@ import java.net.URL
 
 object SupabaseClient {
 
+    private const val TAG = "SupabaseClient"
     const val SUPABASE_URL = "https://hltdjkrlvkikxtiwtnpi.supabase.co"
     const val SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsdGRqa3Jsdmtpa3h0aXd0bnBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5MTc0MTAsImV4cCI6MjEwODQ5MzQxMH0.bIHEpakjDuCQ1hJPjS6FydrxEMAD2fVzU6ilOsyN90Q"
 
@@ -27,16 +29,18 @@ object SupabaseClient {
             conn.connectTimeout = 10000
             conn.readTimeout = 10000
 
-            if (conn.responseCode in 200..299) {
+            val code = conn.responseCode
+            if (code in 200..299) {
                 val reader = BufferedReader(InputStreamReader(conn.inputStream))
                 val response = reader.readText()
                 reader.close()
                 JSONArray(response)
             } else {
+                Log.e(TAG, "GET $table failed with code $code")
                 JSONArray()
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "GET $table Exception: ${e.message}")
             JSONArray()
         } finally {
             conn.disconnect()
@@ -62,9 +66,20 @@ object SupabaseClient {
             writer.flush()
             writer.close()
 
-            conn.responseCode in 200..299
+            val code = conn.responseCode
+            if (code in 200..299) {
+                Log.d(TAG, "POST $table Success: $code")
+                true
+            } else {
+                val errStream = conn.errorStream ?: conn.inputStream
+                val errReader = BufferedReader(InputStreamReader(errStream))
+                val errText = errReader.readText()
+                errReader.close()
+                Log.e(TAG, "POST $table Failed ($code): $errText")
+                false
+            }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "POST $table Exception: ${e.message}")
             false
         } finally {
             conn.disconnect()
@@ -76,7 +91,7 @@ object SupabaseClient {
         val url = URL(endpoint)
         val conn = url.openConnection() as HttpURLConnection
         try {
-            conn.requestMethod = "POST" // Overriding method for patch via X-HTTP-Method-Override or PostgREST patch
+            conn.requestMethod = "POST"
             conn.setRequestProperty("X-HTTP-Method-Override", "PATCH")
             conn.setRequestProperty("apikey", SUPABASE_KEY)
             conn.setRequestProperty("Authorization", "Bearer $SUPABASE_KEY")
@@ -90,9 +105,16 @@ object SupabaseClient {
             writer.flush()
             writer.close()
 
-            conn.responseCode in 200..299
+            val code = conn.responseCode
+            if (code in 200..299) {
+                Log.d(TAG, "PATCH $table Success: $code")
+                true
+            } else {
+                Log.e(TAG, "PATCH $table Failed ($code)")
+                false
+            }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "PATCH $table Exception: ${e.message}")
             false
         } finally {
             conn.disconnect()

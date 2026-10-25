@@ -29,7 +29,7 @@ class AdvisoryRepository {
     private val _isLoggedIn = MutableStateFlow(true)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
-    private val _currentUser = MutableStateFlow<UserProfile?>(
+    private val _registeredUsers = mutableListOf(
         UserProfile(
             id = "usr-1",
             fullName = "Budi Hendrawan",
@@ -39,6 +39,8 @@ class AdvisoryRepository {
             industry = "Manufaktur & Distribusi"
         )
     )
+
+    private val _currentUser = MutableStateFlow<UserProfile?>(_registeredUsers.first())
     val currentUser: StateFlow<UserProfile?> = _currentUser.asStateFlow()
 
     private val _freeQuestions = MutableStateFlow<List<FreeQuestion>>(emptyList())
@@ -355,18 +357,49 @@ class AdvisoryRepository {
     private fun syncWithSupabase() {
         repositoryScope.launch {
             try {
-                // Sync Experts from Supabase
+                // 1. Fetch Users from Supabase
+                val jsonUsers = SupabaseClient.get("users")
+                if (jsonUsers.length() > 0) {
+                    for (i in 0 until jsonUsers.length()) {
+                        val obj = jsonUsers.getJSONObject(i)
+                        val fetchedUser = UserProfile(
+                            id = obj.optString("id", "usr-$i"),
+                            fullName = obj.optString("full_name", "Pengguna Advisory"),
+                            companyName = obj.optString("company_name", "Perusahaan Anda"),
+                            email = obj.optString("email", ""),
+                            phone = obj.optString("phone", ""),
+                            industry = obj.optString("industry", "Umum")
+                        )
+                        if (_registeredUsers.none { it.email.lowercase() == fetchedUser.email.lowercase() }) {
+                            _registeredUsers.add(fetchedUser)
+                        }
+                    }
+                }
+
+                // Ensure current user is in Supabase
+                _currentUser.value?.let { user ->
+                    val userJson = JSONObject()
+                    userJson.put("id", user.id)
+                    userJson.put("full_name", user.fullName)
+                    userJson.put("company_name", user.companyName)
+                    userJson.put("email", user.email)
+                    userJson.put("phone", user.phone)
+                    userJson.put("industry", user.industry)
+                    SupabaseClient.post("users", userJson)
+                }
+
+                // 2. Sync Experts from Supabase
                 val jsonExperts = SupabaseClient.get("experts")
                 if (jsonExperts.length() > 0) {
                     val fetchedExperts = mutableListOf<Expert>()
                     for (i in 0 until jsonExperts.length()) {
                         val obj = jsonExperts.getJSONObject(i)
                         val pPillarStr = obj.optString("primary_pillar", "ACCOUNTING")
-                        val primaryPillar = try { PillarType.valueOf(pPillarStr) } catch (e: Exception) { PillarType.ACCOUNTING }
+                        val primaryPillar = try { PillarType.valueOf(pPillarStr) } catch (_: Exception) { PillarType.ACCOUNTING }
 
                         val secStr = obj.optString("secondary_pillars", "")
                         val secPillars = secStr.split(",").mapNotNull {
-                            try { PillarType.valueOf(it.trim()) } catch (e: Exception) { null }
+                            try { PillarType.valueOf(it.trim()) } catch (_: Exception) { null }
                         }
 
                         val certsStr = obj.optString("certifications", "")
@@ -391,6 +424,28 @@ class AdvisoryRepository {
                     }
                     _experts.value = fetchedExperts
                 }
+
+                // 3. Sync Bookings from Supabase
+                val jsonBookings = SupabaseClient.get("booking_requests")
+                if (jsonBookings.length() > 0) {
+                    val fetchedBookings = mutableListOf<BookingRequest>()
+                    for (i in 0 until jsonBookings.length()) {
+                        val obj = jsonBookings.getJSONObject(i)
+                        fetchedBookings.add(
+                            BookingRequest(
+                                id = obj.optString("id", "bk-$i"),
+                                expertId = obj.optString("expert_id", "exp-1"),
+                                expertName = obj.optString("expert_name", "Expert Specialist"),
+                                date = obj.optString("booking_date", "Hari ini"),
+                                timeSlot = obj.optString("time_slot", "10:00 WIB"),
+                                clientTopic = obj.optString("client_topic", "Konsultasi Advisory"),
+                                durationMinutes = obj.optInt("duration_minutes", 60),
+                                status = obj.optString("status", "Scheduled")
+                            )
+                        )
+                    }
+                    _bookings.value = fetchedBookings
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -400,19 +455,15 @@ class AdvisoryRepository {
     // Auth Actions
 
     fun loginUser(email: String, pass: String): Boolean {
-        if (email.isNotBlank() && pass.isNotBlank()) {
-            _isLoggedIn.value = true
-            if (_currentUser.value == null) {
-                _currentUser.value = UserProfile(
-                    id = "usr-1",
-                    fullName = "Pengguna Advisory",
-                    companyName = "PT Mandiri Sejahtera",
-                    email = email,
-                    phone = "081234567890",
-                    industry = "Umum"
-                )
+        val trimmedEmail = email.trim()
+        if (trimmedEmail.isNotBlank() && pass.isNotBlank()) {
+            // Find registered user by email
+            val matchedUser = _registeredUsers.find { it.email.equals(trimmedEmail, ignoreCase = true) }
+            if (matchedUser != null) {
+                _currentUser.value = matchedUser
+                _isLoggedIn.value = true
+                return true
             }
-            return true
         }
         return false
     }
@@ -429,11 +480,12 @@ class AdvisoryRepository {
             val profile = UserProfile(
                 id = userId,
                 fullName = fullName,
-                companyName = if (companyName.isBlank()) "Perusahaan Anda" else companyName,
-                email = email,
+                companyName = companyName.ifBlank { "Perusahaan Anda" },
+                email = email.trim(),
                 phone = phone,
-                industry = if (industry.isBlank()) "Manufaktur & Jasa" else industry
+                industry = industry.ifBlank { "Manufaktur & Jasa" }
             )
+            _registeredUsers.add(profile)
             _currentUser.value = profile
             _isLoggedIn.value = true
 
@@ -444,7 +496,7 @@ class AdvisoryRepository {
                     json.put("id", userId)
                     json.put("full_name", fullName)
                     json.put("company_name", profile.companyName)
-                    json.put("email", email)
+                    json.put("email", profile.email)
                     json.put("phone", phone)
                     json.put("industry", profile.industry)
                     SupabaseClient.post("users", json)
@@ -459,6 +511,7 @@ class AdvisoryRepository {
 
     fun logout() {
         _isLoggedIn.value = false
+        _currentUser.value = null
     }
 
     // Interactive Actions
@@ -476,7 +529,7 @@ class AdvisoryRepository {
             else -> PillarType.ACCOUNTING
         }
 
-        val aiAnswer = generateAnswerFor(questionText, detectedCategory)
+        val aiAnswer = generateAnswerFor(detectedCategory)
         val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
         val currentTime = dateFormat.format(Date())
         val questionId = "fq-${System.currentTimeMillis()}"
@@ -496,9 +549,22 @@ class AdvisoryRepository {
         // Post to Supabase
         repositoryScope.launch {
             try {
+                val currentUserId = _currentUser.value?.id ?: "usr-1"
+                // Ensure user exists first
+                _currentUser.value?.let { user ->
+                    val userJson = JSONObject()
+                    userJson.put("id", user.id)
+                    userJson.put("full_name", user.fullName)
+                    userJson.put("company_name", user.companyName)
+                    userJson.put("email", user.email)
+                    userJson.put("phone", user.phone)
+                    userJson.put("industry", user.industry)
+                    SupabaseClient.post("users", userJson)
+                }
+
                 val json = JSONObject()
                 json.put("id", questionId)
-                json.put("user_id", _currentUser.value?.id ?: "usr-1")
+                json.put("user_id", currentUserId)
                 json.put("question_text", questionText)
                 json.put("category", detectedCategory.name)
                 json.put("ai_basic_answer", aiAnswer)
@@ -513,7 +579,7 @@ class AdvisoryRepository {
         return newQ
     }
 
-    private fun generateAnswerFor(q: String, pillar: PillarType): String {
+    private fun generateAnswerFor(pillar: PillarType): String {
         return when (pillar) {
             PillarType.TAX -> "Pertanyaan Anda berkaitan dengan kepatuhan & risiko perpajakan. Secara umum, setiap transaksi wajib ditelaah dasar hukumnya, tarif yang berlaku, serta kesesuaian faktur/bukti potong dengan laporan keuangan."
             PillarType.COSTING -> "Untuk masalah biaya/HPP, langkah awal adalah memisahkan biaya langsung (Direct Material & Labor) dengan Biaya Overhead Pabrik (BOP), serta menentukan Cost Driver yang relevan per lini produk."
@@ -542,9 +608,22 @@ class AdvisoryRepository {
         // Post booking to Supabase
         repositoryScope.launch {
             try {
+                val currentUserId = _currentUser.value?.id ?: "usr-1"
+                // Ensure user exists in Supabase users table first to prevent FK constraint error!
+                _currentUser.value?.let { user ->
+                    val userJson = JSONObject()
+                    userJson.put("id", user.id)
+                    userJson.put("full_name", user.fullName)
+                    userJson.put("company_name", user.companyName)
+                    userJson.put("email", user.email)
+                    userJson.put("phone", user.phone)
+                    userJson.put("industry", user.industry)
+                    SupabaseClient.post("users", userJson)
+                }
+
                 val json = JSONObject()
                 json.put("id", bookingId)
-                json.put("user_id", _currentUser.value?.id ?: "usr-1")
+                json.put("user_id", currentUserId)
                 json.put("expert_id", expertId)
                 json.put("expert_name", expert?.name ?: "Expert Specialist")
                 json.put("booking_date", date)
