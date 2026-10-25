@@ -49,7 +49,7 @@ fun AdvisoryNavGraph(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = Screen.Login.route,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) {

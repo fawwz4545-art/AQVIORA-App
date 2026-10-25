@@ -27,7 +27,7 @@ class AdvisoryRepository {
 
     private val repositoryScope = CoroutineScope(Dispatchers.IO)
 
-    private val _isLoggedIn = MutableStateFlow(true)
+    private val _isLoggedIn = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
     private val _registeredUsers = mutableListOf(
@@ -41,7 +41,7 @@ class AdvisoryRepository {
         )
     )
 
-    private val _currentUser = MutableStateFlow<UserProfile?>(_registeredUsers.first())
+    private val _currentUser = MutableStateFlow<UserProfile?>(null)
     val currentUser: StateFlow<UserProfile?> = _currentUser.asStateFlow()
 
     private val _freeQuestions = MutableStateFlow<List<FreeQuestion>>(emptyList())
