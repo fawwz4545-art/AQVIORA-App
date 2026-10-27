@@ -46,11 +46,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.advisoryapp.data.AuthPreferences
 import com.example.advisoryapp.ui.AdvisoryViewModel
 import kotlinx.coroutines.launch
 
@@ -61,11 +63,15 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var emailInput by remember { mutableStateOf("") }
-    var passwordInput by remember { mutableStateOf("") }
+
+    val (savedRemember, savedEmail, savedPass) = remember { AuthPreferences.getSavedAuth(context) }
+
+    var emailInput by remember { mutableStateOf(savedEmail) }
+    var passwordInput by remember { mutableStateOf(savedPass) }
     var passwordVisible by remember { mutableStateOf(false) }
-    var rememberMe by remember { mutableStateOf(true) }
+    var rememberMe by remember { mutableStateOf(savedRemember) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
@@ -217,6 +223,8 @@ fun LoginScreen(
                                 val success = viewModel.login(emailInput, passwordInput)
                                 isLoading = false
                                 if (success) {
+                                    // Save or clear Remember Me preferences on device
+                                    AuthPreferences.saveRememberMe(context, rememberMe, emailInput, passwordInput)
                                     onLoginSuccess()
                                 } else {
                                     errorMessage = "Email belum terdaftar di Supabase Cloud. Silakan buat akun baru."
