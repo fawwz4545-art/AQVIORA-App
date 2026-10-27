@@ -14,15 +14,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -84,32 +87,50 @@ fun HomeScreen(
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
-                    Text(
-                        text = "AQVIORA App • ACCOUNTING, TAX & CONTROL ADVISORY",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        letterSpacing = 1.sp
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(
-                        text = "Tanya Masalah Bisnis Anda. Temukan Solusi Terintegrasi.",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        lineHeight = 26.sp
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Shield,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.tertiary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "AQVIORA App ADVISORY",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            letterSpacing = 1.sp
+                        )
+                    }
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "ASK • DIAGNOSE • SOLVE • IMPLEMENT • MONITOR • GROW",
+                        text = "Solusi Akuntansi, Pajak & Kontrol Internal Terintegrasi",
+                        fontSize = 19.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        lineHeight = 25.sp
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Tanyakan masalah finansial bisnis Anda dan konsultasikan langsung dengan konsultan ahli.",
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f)
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f),
+                        lineHeight = 16.sp
                     )
                 }
             }
@@ -119,33 +140,43 @@ fun HomeScreen(
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(18.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Help,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "TANYA GRATIS (Free Lead Gen)",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Help,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "Tanya Gratis Masalah Bisnis",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = "Konsultasi singkat gratis mengenai akuntansi & pajak",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(
-                        text = "Sampaikan pertanyaan seputar akuntansi, pajak, biaya, SOP atau audit secara gratis:",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
 
                     OutlinedTextField(
                         value = questionInput,
@@ -153,7 +184,7 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("Tuliskan pertanyaan masalah bisnis Anda...", fontSize = 13.sp) },
                         maxLines = 3,
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(14.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.outline,
@@ -178,7 +209,7 @@ fun HomeScreen(
                         }
                     )
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
                         text = "Contoh Pertanyaan Cepat:",
@@ -186,7 +217,7 @@ fun HomeScreen(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -212,11 +243,11 @@ fun HomeScreen(
                 latestAnswer?.let { answer ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(18.dp),
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
+                        Column(modifier = Modifier.padding(18.dp)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     imageVector = Icons.Default.AutoAwesome,
@@ -225,7 +256,7 @@ fun HomeScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "Jawaban Dasar & Edukasi Awal",
+                                    text = "Jawaban Edukasi Awal",
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -236,14 +267,14 @@ fun HomeScreen(
                                 text = answer.aiBasicAnswer,
                                 fontSize = 13.sp,
                                 color = MaterialTheme.colorScheme.onSurface,
-                                lineHeight = 18.sp
+                                lineHeight = 19.sp
                             )
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(14.dp))
 
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clip(RoundedCornerShape(10.dp))
+                                    .clip(RoundedCornerShape(12.dp))
                                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
                                     .padding(12.dp)
                             ) {
@@ -254,12 +285,12 @@ fun HomeScreen(
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
                                     )
-                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Spacer(modifier = Modifier.height(10.dp))
                                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                         Button(
                                             onClick = onNavigateToExperts,
                                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                                            shape = RoundedCornerShape(8.dp),
+                                            shape = RoundedCornerShape(10.dp),
                                             modifier = Modifier.weight(1f)
                                         ) {
                                             Text("Konsultasi Expert", fontSize = 11.sp, color = MaterialTheme.colorScheme.onPrimary)
@@ -267,7 +298,7 @@ fun HomeScreen(
                                         Button(
                                             onClick = onNavigateToDiagnostic,
                                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
-                                            shape = RoundedCornerShape(8.dp),
+                                            shape = RoundedCornerShape(10.dp),
                                             modifier = Modifier.weight(1f)
                                         ) {
                                             Text("Self Diagnostic", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSecondary)
@@ -285,7 +316,7 @@ fun HomeScreen(
         if (freeQuestions.isNotEmpty()) {
             item {
                 Text(
-                    text = "Riwayat Tanya Gratis Anda",
+                    text = "Riwayat Pertanyaan Anda",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
@@ -295,18 +326,18 @@ fun HomeScreen(
             items(freeQuestions.take(3)) { item ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(14.dp),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                 ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
+                    Column(modifier = Modifier.padding(14.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
                                 text = item.category?.displayName ?: "Umum",
-                                fontSize = 10.sp,
+                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -344,6 +375,7 @@ fun HomeScreen(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = "Layanan terpadu untuk menyelesaikan masalah bisnis dari hulu ke hilir.",
                     fontSize = 12.sp,
@@ -368,13 +400,13 @@ fun HomeScreen(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = "Dari pertanyaan gratis hingga monitoring & advisory berkelanjutan:",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     items(ServiceLadderLevel.entries.toTypedArray()) { level ->
@@ -382,12 +414,12 @@ fun HomeScreen(
                             modifier = Modifier
                                 .width(220.dp)
                                 .height(170.dp),
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
                         ) {
                             Column(
                                 modifier = Modifier
-                                    .padding(14.dp)
+                                    .padding(16.dp)
                                     .fillMaxSize(),
                                 verticalArrangement = Arrangement.SpaceBetween
                             ) {
@@ -398,6 +430,7 @@ fun HomeScreen(
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.tertiary
                                     )
+                                    Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = level.title,
                                         fontSize = 15.sp,
