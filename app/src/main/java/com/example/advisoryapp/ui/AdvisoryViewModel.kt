@@ -38,9 +38,10 @@ class AdvisoryViewModel(
         companyName: String,
         email: String,
         phone: String,
-        industry: String
+        industry: String,
+        businessScale: String = "Menengah (UKM)"
     ): Boolean {
-        return repository.registerUser(fullName, companyName, email, phone, industry)
+        return repository.registerUser(fullName, companyName, email, phone, industry, businessScale)
     }
 
     fun logout() {

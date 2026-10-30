@@ -514,7 +514,8 @@ class AdvisoryRepository {
         companyName: String,
         email: String,
         phone: String,
-        industry: String
+        industry: String,
+        businessScale: String = "Menengah (UKM)"
     ): Boolean {
         if (fullName.isNotBlank() && email.isNotBlank()) {
             val userId = "usr-${System.currentTimeMillis()}"
@@ -524,7 +525,8 @@ class AdvisoryRepository {
                 companyName = companyName.ifBlank { "Perusahaan Anda" },
                 email = email.trim(),
                 phone = phone,
-                industry = industry.ifBlank { "Manufaktur & Jasa" }
+                industry = industry.ifBlank { "Manufaktur & Jasa" },
+                businessScale = businessScale.ifBlank { "Menengah (UKM)" }
             )
             _registeredUsers.add(profile)
             _currentUser.value = profile
@@ -541,6 +543,7 @@ class AdvisoryRepository {
                     json.put("email", profile.email)
                     json.put("phone", phone)
                     json.put("industry", profile.industry)
+                    json.put("business_scale", profile.businessScale)
                     SupabaseClient.post("users", json)
                 } catch (e: Exception) {
                     e.printStackTrace()

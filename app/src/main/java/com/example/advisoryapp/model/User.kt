@@ -6,5 +6,6 @@ data class UserProfile(
     val companyName: String,
     val email: String,
     val phone: String,
-    val industry: String
+    val industry: String,
+    val businessScale: String = "Menengah (UKM)"
 )
