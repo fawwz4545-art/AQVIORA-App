@@ -50,10 +50,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.advisoryapp.data.AuthPreferences
 import com.example.advisoryapp.ui.AdvisoryViewModel
+import com.example.advisoryapp.ui.theme.AdvisoryAppTheme
 import kotlinx.coroutines.launch
 
 @Composable
@@ -265,5 +267,17 @@ fun LoginScreen(
                 Text("Daftar Akun Baru", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    AdvisoryAppTheme {
+        LoginScreen(
+            viewModel = AdvisoryViewModel(),
+            onLoginSuccess = {},
+            onNavigateToRegister = {}
+        )
     }
 }

@@ -52,9 +52,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.advisoryapp.ui.AdvisoryViewModel
+import com.example.advisoryapp.ui.theme.AdvisoryAppTheme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -370,5 +372,17 @@ fun BusinessScaleInfoCard(category: String, omzet: String, modal: String) {
                 Text(text = modal, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RegisterScreenPreview() {
+    AdvisoryAppTheme {
+        RegisterScreen(
+            viewModel = AdvisoryViewModel(),
+            onRegisterSuccess = {},
+            onNavigateToLogin = {}
+        )
     }
 }
