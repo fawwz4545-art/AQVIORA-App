@@ -77,168 +77,9 @@ fun DiagnosticScreen(
     val categories = listOf("Mikro", "Kecil", "Menengah (UKM)", "Enterprise (Besar)")
     var selectedCategory by remember { mutableStateOf(currentUser?.businessScale ?: "Menengah (UKM)") }
 
-    // Dynamic Questionnaire Extracted from AQVIORA_Business_Diagnostic_Questionnaire-1.docx
-    val questionsMap = remember {
-        mapOf(
-            "Mikro" to listOf(
-                DiagnosticQuestionItem(
-                    pillar = PillarType.ACCOUNTING,
-                    questionText = "A1. Bagaimana cara Anda mencatat uang yang masuk dari penjualan dan uang keluar untuk usaha?",
-                    options = listOf(
-                        "Menggunakan aplikasi pencatatan keuangan" to HealthStatus.BASIC,
-                        "Mencatat menggunakan Excel atau Google Sheets" to HealthStatus.BASIC,
-                        "Mencatat secara manual di buku" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Hanya mengingat jumlah uang yang masuk dan keluar" to HealthStatus.HIGH_ATTENTION,
-                        "Tidak pernah mencatat pemasukan dan pengeluaran" to HealthStatus.HIGH_ATTENTION
-                    )
-                ),
-                DiagnosticQuestionItem(
-                    pillar = PillarType.ACCOUNTING,
-                    questionText = "A2. Apakah Anda mengetahui berapa keuntungan bersih yang diperoleh usaha setiap bulan?",
-                    options = listOf(
-                        "Ya, mengetahui jumlah keuntungan berdasarkan perhitungan" to HealthStatus.BASIC,
-                        "Mengetahui perkiraan keuntungan" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Tidak bisa membedakan uang modal dan keuntungan" to HealthStatus.HIGH_ATTENTION,
-                        "Tidak mengetahui keuntungan usaha" to HealthStatus.HIGH_ATTENTION
-                    )
-                ),
-                DiagnosticQuestionItem(
-                    pillar = PillarType.ACCOUNTING,
-                    questionText = "A3. Apakah uang pribadi dan uang usaha sudah dipisahkan?",
-                    options = listOf(
-                        "Selalu dipisahkan menggunakan rekening berbeda" to HealthStatus.BASIC,
-                        "Dipisahkan, tetapi terkadang masih tercampur" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Masih menggunakan rekening yang sama / dikelola bersamaan" to HealthStatus.HIGH_ATTENTION
-                    )
-                ),
-                DiagnosticQuestionItem(
-                    pillar = PillarType.TAX,
-                    questionText = "T1. Apakah Anda mengetahui kewajiban membayar dan melaporkan pajak usaha?",
-                    options = listOf(
-                        "Ya, saya memahami kewajiban pajak usaha" to HealthStatus.BASIC,
-                        "Mengetahui ada kewajiban pajak tetapi belum paham perhitungan" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Tidak mengetahui apakah usaha saya punya kewajiban pajak" to HealthStatus.HIGH_ATTENTION
-                    )
-                ),
-                DiagnosticQuestionItem(
-                    pillar = PillarType.FINANCE,
-                    questionText = "F1. Apakah uang yang tersedia saat ini cukup untuk membayar kebutuhan usaha sehari-hari?",
-                    options = listOf(
-                        "Selalu cukup" to HealthStatus.BASIC,
-                        "Biasanya cukup tetapi terkadang mengalami kekurangan" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Harus menggunakan uang pribadi / meminjam untuk kebutuhan usaha" to HealthStatus.HIGH_ATTENTION
-                    )
-                ),
-                DiagnosticQuestionItem(
-                    pillar = PillarType.COSTING,
-                    questionText = "C1. Bagaimana Anda menentukan harga jual produk atau jasa?",
-                    options = listOf(
-                        "Menghitung seluruh biaya dan menambahkan keuntungan" to HealthStatus.BASIC,
-                        "Menghitung biaya bahan baku saja" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Mengikuti harga pesaing / menentukan berdasarkan perkiraan" to HealthStatus.HIGH_ATTENTION
-                    )
-                )
-            ),
-            "Kecil" to listOf(
-                DiagnosticQuestionItem(
-                    pillar = PillarType.ACCOUNTING,
-                    questionText = "A1. Bagaimana sistem pencatatan transaksi keuangan yang diterapkan dalam usaha Anda?",
-                    options = listOf(
-                        "Menggunakan software akuntansi / terintegrasi" to HealthStatus.BASIC,
-                        "Menggunakan spreadsheet / manual buku" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Belum memiliki sistem pencatatan yang terstruktur" to HealthStatus.HIGH_ATTENTION
-                    )
-                ),
-                DiagnosticQuestionItem(
-                    pillar = PillarType.ACCOUNTING,
-                    questionText = "A2. Seberapa rutin perusahaan menyusun laporan keuangan?",
-                    options = listOf(
-                        "Setiap bulan" to HealthStatus.BASIC,
-                        "Setiap tiga bulan / enam bulan" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Hanya ketika dibutuhkan / belum pernah formal" to HealthStatus.HIGH_ATTENTION
-                    )
-                ),
-                DiagnosticQuestionItem(
-                    pillar = PillarType.TAX,
-                    questionText = "T1. Seberapa rutin perusahaan melakukan rekonsiliasi omzet dengan pelaporan pajak?",
-                    options = listOf(
-                        "Setiap bulan sebelum pelaporan" to HealthStatus.BASIC,
-                        "Setiap akhir tahun / SPT Tahunan" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Tidak pernah melakukan rekonsiliasi" to HealthStatus.HIGH_ATTENTION
-                    )
-                ),
-                DiagnosticQuestionItem(
-                    pillar = PillarType.FINANCE,
-                    questionText = "F1. Bagaimana perusahaan melakukan monitoring terhadap arus kas?",
-                    options = listOf(
-                        "Membuat laporan arus kas secara rutin / cash flow forecasting" to HealthStatus.BASIC,
-                        "Memantau melalui spreadsheet / saldo bank saja" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Tidak melakukan monitoring secara terstruktur" to HealthStatus.HIGH_ATTENTION
-                    )
-                )
-            ),
-            "Menengah (UKM)" to listOf(
-                DiagnosticQuestionItem(
-                    pillar = PillarType.ACCOUNTING,
-                    questionText = "A1. Apakah perusahaan telah menerapkan kebijakan akuntansi dan prosedur pencatatan transaksi secara formal?",
-                    options = listOf(
-                        "Ya, seluruhnya terdokumentasi dan diterapkan secara konsisten" to HealthStatus.BASIC,
-                        "Sudah memiliki kebijakan, tetapi belum mencakup seluruh transaksi" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Belum memiliki kebijakan akuntansi formal / tergantung staf" to HealthStatus.HIGH_ATTENTION
-                    )
-                ),
-                DiagnosticQuestionItem(
-                    pillar = PillarType.ACCOUNTING,
-                    questionText = "A2. Berapa lama waktu yang dibutuhkan perusahaan untuk menyelesaikan proses monthly financial closing?",
-                    options = listOf(
-                        "Maksimal 5 hari kerja" to HealthStatus.BASIC,
-                        "6–10 hari kerja" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Lebih dari 15 hari kerja / belum terstandarisasi" to HealthStatus.HIGH_ATTENTION
-                    )
-                ),
-                DiagnosticQuestionItem(
-                    pillar = PillarType.TAX,
-                    questionText = "T1. Apakah perusahaan telah memiliki Tax Compliance Management System yang terdokumentasi?",
-                    options = listOf(
-                        "Ya, terdapat SOP, tax calendar, dan penanggung jawab yang jelas" to HealthStatus.BASIC,
-                        "Memiliki SOP tetapi belum mencakup seluruh kewajiban pajak" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Belum memiliki sistem kepatuhan pajak yang terstruktur" to HealthStatus.HIGH_ATTENTION
-                    )
-                ),
-                DiagnosticQuestionItem(
-                    pillar = PillarType.INTERNAL_CONTROL,
-                    questionText = "IC1. Bagaimana prosedur persetujuan (approval) pengeluaran kas & bank?",
-                    options = listOf(
-                        "Ada SOP tertulis, Matriks Otorisasi & Pemisahan Tugas (SoD)" to HealthStatus.BASIC,
-                        "Ada approval tetapi masih sering dilakukan lisan/WA" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Semua uang dipegang owner / tanpa kontrol otorisasi" to HealthStatus.HIGH_ATTENTION
-                    )
-                )
-            ),
-            "Enterprise (Besar)" to listOf(
-                DiagnosticQuestionItem(
-                    pillar = PillarType.ACCOUNTING,
-                    questionText = "A1. Bagaimana tingkat integrasi Financial Reporting System dengan sistem operasional perusahaan?",
-                    options = listOf(
-                        "Terintegrasi sepenuhnya melalui ERP dengan automated financial consolidation" to HealthStatus.BASIC,
-                        "Terintegrasi secara parsial dengan beberapa proses manual" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Belum memiliki integrasi sistem yang memadai" to HealthStatus.HIGH_ATTENTION
-                    )
-                ),
-                DiagnosticQuestionItem(
-                    pillar = PillarType.TAX,
-                    questionText = "T1. Bagaimana tingkat kematangan Tax Governance Framework perusahaan?",
-                    options = listOf(
-                        "Enterprise-wide tax governance terintegrasi dengan corporate governance" to HealthStatus.BASIC,
-                        "Kebijakan perpajakan dikelola oleh departemen pajak" to HealthStatus.IMPROVEMENT_REQUIRED,
-                        "Belum memiliki tax governance framework yang komprehensif" to HealthStatus.HIGH_ATTENTION
-                    )
-                )
-            )
-        )
+    val currentQuestions = remember(selectedCategory) {
+        DiagnosticQuestionsData.allQuestions[selectedCategory] ?: DiagnosticQuestionsData.allQuestions["Menengah (UKM)"] ?: emptyList()
     }
-
-    val currentQuestions = questionsMap[selectedCategory] ?: questionsMap["Menengah (UKM)"]!!
     val userAnswers = remember { mutableStateMapOf<PillarType, HealthStatus>() }
 
     Column(
@@ -301,7 +142,7 @@ fun DiagnosticScreen(
                 onClick = { selectedTab = 1 },
                 text = {
                     Text(
-                        text = "Mulai Kuesioner Diagnostic",
+                        text = "Mulai Kuesioner Diagnostic (${currentQuestions.size} Soal)",
                         fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Medium,
                         fontSize = 13.sp,
                         color = if (selectedTab == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
@@ -384,7 +225,7 @@ fun DiagnosticScreen(
                                 ) {
                                     Icon(Icons.Default.Quiz, contentDescription = null, tint = MaterialTheme.colorScheme.onTertiary, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Mulai Self Diagnostic Kuesioner", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onTertiary, fontSize = 12.sp)
+                                    Text("Mulai Kuesioner (${currentQuestions.size} Soal)", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onTertiary, fontSize = 12.sp)
                                 }
                             }
                         }
