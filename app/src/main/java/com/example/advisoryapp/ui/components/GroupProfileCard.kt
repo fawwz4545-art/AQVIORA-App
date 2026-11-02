@@ -83,32 +83,49 @@ fun GroupProfileCard(
             Spacer(modifier = Modifier.height(12.dp))
 
             // Member List
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                MemberRow("Ketua", "Muhammad Al-Hafizh Fahim Bandi")
-                MemberRow("Anggota 1", "Ahmad Fawwaz Rizqullah")
-                MemberRow("Anggota 2", "Claudya Rahmah Alivia")
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                MemberCardRow("Ketua", "Muhammad Al-Hafizh Fahim Bandi", "NIM: 2026307001", "Alamat: Margonda, Depok")
+                MemberCardRow("Anggota 1", "Ahmad Fawwaz Rizqullah", "NIM: 2026307002", "Alamat: Kalibata, Jaksel")
+                MemberCardRow("Anggota 2", "Claudya Rahmah Alivia", "NIM: 2026307003", "Alamat: Bekasi, Jabar")
             }
         }
     }
 }
 
 @Composable
-fun MemberRow(role: String, name: String) {
-    Row(
+fun MemberCardRow(role: String, name: String, nim: String, address: String) {
+    Card(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(4.dp))
-                    .padding(horizontal = 6.dp, vertical = 2.dp)
+        Column(modifier = Modifier.padding(10.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = role, fontSize = 9.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(4.dp))
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Text(text = role, fontSize = 9.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = name, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                }
             }
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = name, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = nim, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
+                Text(text = address, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
     }
 }
