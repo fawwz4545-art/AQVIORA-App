@@ -1,5 +1,6 @@
 package com.example.advisoryapp.data
 
+import android.content.Context
 import com.example.advisoryapp.model.ActionItem
 import com.example.advisoryapp.model.BookingRequest
 import com.example.advisoryapp.model.ClientProject
@@ -23,9 +24,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class AdvisoryRepository {
+class AdvisoryRepository(context: Context? = null) {
 
     private val repositoryScope = CoroutineScope(Dispatchers.IO)
+    private val dbHelper: AppDatabaseHelper? = context?.let { AppDatabaseHelper(it.applicationContext) }
 
     private val _isLoggedIn = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
@@ -74,83 +76,80 @@ class AdvisoryRepository {
     }
 
     private fun loadInitialData() {
-        // Initial Free Q&A History
-        _freeQuestions.value = listOf(
-            FreeQuestion(
-                id = "fq-1",
-                timestamp = "Hari ini, 09:30",
-                questionText = "Omzet bisnis restoran saya naik 25% tetapi laba bersih malah turun. Apa penyebab utamanya?",
-                category = PillarType.COSTING,
-                aiBasicAnswer = "Fenomena ini biasanya disebabkan oleh: 1) Kenaikan HPP/biaya bahan baku yang tidak diteruskan ke harga jual, 2) Biaya operasional (overhead) yang membengkak tanpa kontrol, atau 3) Porsi diskon/promo yang terlalu agresif. Disarankan melakukan Costing & Margin Analysis.",
-                recommendedPillar = PillarType.COSTING,
-                ctaText = "Butuh analisis HPP & margin restoran Anda? Konsultasikan dengan Costing Expert."
-            ),
-            FreeQuestion(
-                id = "fq-2",
-                timestamp = "Kemarin, 14:15",
-                questionText = "Apakah transaksi jasa konsultasi dengan vendor perorangan terutang PPh 23 atau PPh 21?",
-                category = PillarType.TAX,
-                aiBasicAnswer = "Pembayaran jasa kepada Wajib Pajak Orang Pribadi dalam negeri dipotong PPh Pasal 21 (Bukan Pegawai). PPh Pasal 23 berlaku khusus untuk pemotongan jasa yang dibayarkan kepada Wajib Pajak Badan dalam negeri.",
-                recommendedPillar = PillarType.TAX,
-                ctaText = "Pastikan kepatuhan & potong pungut pajak bisnis Anda. Buat sesi Tax Review."
-            )
-        )
+        // Save demo user into internal local SQLite database
+        dbHelper?.insertUser(_registeredUsers.first())
 
-        // Initial Experts
-        _experts.value = listOf(
-            Expert(
-                id = "exp-1",
-                name = "Budi Santoso, SE, Ak, CA, BKP",
-                title = "Senior Tax & Accounting Advisory Specialist",
-                primaryPillar = PillarType.TAX,
-                secondaryPillars = listOf(PillarType.ACCOUNTING, PillarType.FINANCE),
-                yearsExperience = 15,
-                rating = 4.9,
-                reviewCount = 128,
-                bio = "Mantan Auditor Big 4 & Konsultan Pajak Terdaftar (BKP C). Berpengalaman mendampingi 200+ perusahaan manufaktur, retail & jasa.",
-                certifications = listOf("BKP C (Konsultan Pajak)", "CA (Chartered Accountant)", "Certified Tax Advisor"),
-                hourlyRate = 500000.0
-            ),
-            Expert(
-                id = "exp-2",
-                name = "Siti Rahmawati, M.Ak, CMA",
-                title = "Costing & Budgeting Advisory Specialist",
-                primaryPillar = PillarType.COSTING,
-                secondaryPillars = listOf(PillarType.BUDGETING, PillarType.FINANCE),
-                yearsExperience = 12,
-                rating = 4.85,
-                reviewCount = 94,
-                bio = "Praktisi Manajemen Biaya & Anggaran Sektor Manufaktur, Kuliner (F&B) dan Distribusi. Ahli penyusunan HPP & Variance Analysis.",
-                certifications = listOf("CMA (Certified Management Accountant)", "Certified Budget Professional"),
-                hourlyRate = 450000.0
-            ),
-            Expert(
-                id = "exp-3",
-                name = "Hendrik Wijaya, SE, CIA, CRMA",
-                title = "Internal Control & Internal Audit Advisor",
-                primaryPillar = PillarType.INTERNAL_CONTROL,
-                secondaryPillars = listOf(PillarType.INTERNAL_AUDIT, PillarType.RISK_MANAGEMENT),
-                yearsExperience = 16,
-                rating = 4.95,
-                reviewCount = 110,
-                bio = "Spesialis Pengendalian Internal, Pencegahan Fraud, SOP & Internal Audit. Pengalaman memimpin tim audit di holding group ternama.",
-                certifications = listOf("CIA (Certified Internal Auditor)", "CRMA (Risk Management Assurance)"),
-                hourlyRate = 550000.0
-            ),
-            Expert(
-                id = "exp-4",
-                name = "Diana Putri, M.Sc, CFA",
-                title = "Financial Analysis & Corporate Advisory",
-                primaryPillar = PillarType.FINANCE,
-                secondaryPillars = listOf(PillarType.BUDGETING, PillarType.RISK_MANAGEMENT),
-                yearsExperience = 10,
-                rating = 4.8,
-                reviewCount = 76,
-                bio = "Ahli Financial Advisory, Cash Flow Optimization, & Restrukturisasi Modal Kerja untuk UMKM dan Bisnis Skala Menengah.",
-                certifications = listOf("CFA Charterholder", "Financial Modeling Specialist"),
-                hourlyRate = 400000.0
+        // Load experts from local SQLite database if available
+        val localExperts = dbHelper?.getAllExperts()
+        if (!localExperts.isNullOrEmpty()) {
+            _experts.value = localExperts
+        } else {
+            _experts.value = listOf(
+                Expert(
+                    id = "exp-1",
+                    name = "Budi Santoso, SE, Ak, CA, BKP",
+                    title = "Senior Tax & Accounting Advisory Specialist",
+                    primaryPillar = PillarType.TAX,
+                    secondaryPillars = listOf(PillarType.ACCOUNTING, PillarType.FINANCE),
+                    yearsExperience = 15,
+                    rating = 4.9,
+                    reviewCount = 128,
+                    bio = "Mantan Auditor Big 4 & Konsultan Pajak Terdaftar (BKP C). Berpengalaman mendampingi 200+ perusahaan manufaktur, retail & jasa.",
+                    certifications = listOf("BKP C (Konsultan Pajak)", "CA (Chartered Accountant)", "Certified Tax Advisor"),
+                    hourlyRate = 500000.0
+                ),
+                Expert(
+                    id = "exp-2",
+                    name = "Siti Rahmawati, M.Ak, CMA",
+                    title = "Costing & Budgeting Advisory Specialist",
+                    primaryPillar = PillarType.COSTING,
+                    secondaryPillars = listOf(PillarType.BUDGETING, PillarType.FINANCE),
+                    yearsExperience = 12,
+                    rating = 4.85,
+                    reviewCount = 94,
+                    bio = "Praktisi Manajemen Biaya & Anggaran Sektor Manufaktur, Kuliner (F&B) dan Distribusi. Ahli penyusunan HPP & Variance Analysis.",
+                    certifications = listOf("CMA (Certified Management Accountant)", "Certified Budget Professional"),
+                    hourlyRate = 450000.0
+                ),
+                Expert(
+                    id = "exp-3",
+                    name = "Hendrik Wijaya, SE, CIA, CRMA",
+                    title = "Internal Control & Internal Audit Advisor",
+                    primaryPillar = PillarType.INTERNAL_CONTROL,
+                    secondaryPillars = listOf(PillarType.INTERNAL_AUDIT, PillarType.RISK_MANAGEMENT),
+                    yearsExperience = 16,
+                    rating = 4.95,
+                    reviewCount = 110,
+                    bio = "Spesialis Pengendalian Internal, Pencegahan Fraud, SOP & Internal Audit. Pengalaman memimpin tim audit di holding group ternama.",
+                    certifications = listOf("CIA (Certified Internal Auditor)", "CRMA (Risk Management Assurance)"),
+                    hourlyRate = 550000.0
+                ),
+                Expert(
+                    id = "exp-4",
+                    name = "Diana Putri, M.Sc, CFA",
+                    title = "Financial Analysis & Corporate Advisory",
+                    primaryPillar = PillarType.FINANCE,
+                    secondaryPillars = listOf(PillarType.BUDGETING, PillarType.RISK_MANAGEMENT),
+                    yearsExperience = 10,
+                    rating = 4.8,
+                    reviewCount = 76,
+                    bio = "Ahli Financial Advisory, Cash Flow Optimization, & Restrukturisasi Modal Kerja untuk UMKM dan Bisnis Skala Menengah.",
+                    certifications = listOf("CFA Charterholder", "Financial Modeling Specialist"),
+                    hourlyRate = 400000.0
+                )
             )
-        )
+        }
+
+        // Load free questions & bookings from local SQLite database if available
+        val localQuestions = dbHelper?.getAllFreeQuestions()
+        if (!localQuestions.isNullOrEmpty()) {
+            _freeQuestions.value = localQuestions
+        }
+
+        val localBookings = dbHelper?.getAllBookings()
+        if (!localBookings.isNullOrEmpty()) {
+            _bookings.value = localBookings
+        }
 
         loadDataForUser(_currentUser.value)
     }
@@ -162,7 +161,7 @@ class AdvisoryRepository {
             _projects.value = emptyList()
             _documents.value = emptyList()
             _invoices.value = emptyList()
-            _bookings.value = emptyList()
+            _bookings.value = dbHelper?.getAllBookings() ?: emptyList()
             return
         }
 
@@ -176,7 +175,7 @@ class AdvisoryRepository {
             _projects.value = emptyList()
             _documents.value = emptyList()
             _invoices.value = emptyList()
-            _bookings.value = emptyList()
+            _bookings.value = dbHelper?.getAllBookings() ?: emptyList()
 
             // Fetch user specific data from Supabase
             fetchUserDataFromSupabase(user.id)
@@ -205,41 +204,6 @@ class AdvisoryRepository {
                 score = 40,
                 findingSummary = "Perhitungan HPP masih berdasarkan estimasi persentase global, belum menggunakan Cost Driver per jenis produk.",
                 recommendedNextStep = "Implementasi Standard Costing & Cost Driver Analysis per kategori produk."
-            ),
-            HealthResult(
-                pillar = PillarType.INTERNAL_CONTROL,
-                status = HealthStatus.HIGH_ATTENTION,
-                score = 45,
-                findingSummary = "Approval pembayaran pengeluaran di atas Rp 10 juta masih dilakukan via chat dan belum ada pemisahan tugas (SoD) staf keuangan.",
-                recommendedNextStep = "Penyusunan SOP Keuangan & Matriks Otorisasi Pengeluaran Kas/Bank."
-            ),
-            HealthResult(
-                pillar = PillarType.FINANCE,
-                status = HealthStatus.IMPROVEMENT_REQUIRED,
-                score = 65,
-                findingSummary = "Cash flow harian tercatat tetapi belum ada cash flow forecast 13 minggu ke depan.",
-                recommendedNextStep = "Penyusunan Rolling Cash Flow Forecast & Working Capital Management."
-            ),
-            HealthResult(
-                pillar = PillarType.BUDGETING,
-                status = HealthStatus.HIGH_ATTENTION,
-                score = 35,
-                findingSummary = "Perusahaan belum memiliki Anggaran Tahunan (Budget) resmi dan analisis varians biaya harian.",
-                recommendedNextStep = "Penyusunan Master Budget Perusahaan (Sales, Expense, & Cash Budget)."
-            ),
-            HealthResult(
-                pillar = PillarType.RISK_MANAGEMENT,
-                status = HealthStatus.IMPROVEMENT_REQUIRED,
-                score = 50,
-                findingSummary = "Risiko operasional dan piutang tak tertagih belum terdokumentasi dalam Risk Register resmi.",
-                recommendedNextStep = "Identifikasi risiko & pembuatan Risk Register & Mitigation Plan."
-            ),
-            HealthResult(
-                pillar = PillarType.INTERNAL_AUDIT,
-                status = HealthStatus.HIGH_ATTENTION,
-                score = 30,
-                findingSummary = "Belum pernah dilakukan audit internal independen atas operasional cabang dan ketaatan SOP.",
-                recommendedNextStep = "Program Internal Audit as a Service (Audit Berbasis Risiko)."
             )
         )
 
@@ -261,24 +225,6 @@ class AdvisoryRepository {
                 pic = "Tax Spv (Budi)",
                 deadline = "20 Mar 2026",
                 isCompleted = false
-            ),
-            ActionItem(
-                id = "act-3",
-                pillar = PillarType.INTERNAL_CONTROL,
-                priority = "Medium",
-                title = "Finalisasi Matriks Otorisasi Pengeluaran Kas & SOP Pembelian",
-                pic = "Manager Ops (Dewi)",
-                deadline = "25 Mar 2026",
-                isCompleted = true
-            ),
-            ActionItem(
-                id = "act-4",
-                pillar = PillarType.BUDGETING,
-                priority = "High",
-                title = "Penyusunan Master Budget 2026 & Key Performance Indicators",
-                pic = "Finance Manager (Eko)",
-                deadline = "30 Mar 2026",
-                isCompleted = false
             )
         )
 
@@ -294,30 +240,6 @@ class AdvisoryRepository {
                 startDate = "01 Feb 2026",
                 targetEndDate = "15 Apr 2026",
                 status = "Active"
-            ),
-            ClientProject(
-                id = "prj-2",
-                title = "Tax Health Check & Rekonsiliasi Pajak Tahunan",
-                pillar = PillarType.TAX,
-                clientName = "PT Mandiri Sejahtera",
-                currentPhase = "Phase 2: Fieldwork & Tax Gap Assessment",
-                progressPercent = 0.40f,
-                assignedExpert = "Budi Santoso, SE, Ak, CA, BKP",
-                startDate = "15 Feb 2026",
-                targetEndDate = "30 Mar 2026",
-                status = "Active"
-            ),
-            ClientProject(
-                id = "prj-3",
-                title = "Internal Audit as a Service Q1 2026",
-                pillar = PillarType.INTERNAL_AUDIT,
-                clientName = "PT Mandiri Sejahtera",
-                currentPhase = "Proposal / Scope Review",
-                progressPercent = 0.10f,
-                assignedExpert = "Hendrik Wijaya, SE, CIA, CRMA",
-                startDate = "01 Apr 2026",
-                targetEndDate = "30 Jun 2026",
-                status = "Proposal"
             )
         )
 
@@ -330,24 +252,6 @@ class AdvisoryRepository {
                 dateUploaded = "10 Feb 2026",
                 fileFormat = "PDF",
                 fileSize = "2.4 MB"
-            ),
-            DocumentItem(
-                id = "doc-2",
-                title = "SOP Pengeluaran Kas & Approval Matrix v1.2.docx",
-                category = "SOP",
-                pillar = PillarType.INTERNAL_CONTROL,
-                dateUploaded = "20 Feb 2026",
-                fileFormat = "DOCX",
-                fileSize = "850 KB"
-            ),
-            DocumentItem(
-                id = "doc-3",
-                title = "Model Kalkulasi HPP & Cost Driver - Final.xlsx",
-                category = "Working Paper",
-                pillar = PillarType.COSTING,
-                dateUploaded = "28 Feb 2026",
-                fileFormat = "XLSX",
-                fileSize = "1.8 MB"
             )
         )
 
@@ -360,24 +264,6 @@ class AdvisoryRepository {
                 issueDate = "05 Feb 2026",
                 dueDate = "12 Feb 2026",
                 isPaid = true
-            ),
-            InvoiceItem(
-                id = "inv-2",
-                invoiceNumber = "INV/2026/02/112",
-                serviceName = "Term 1: Project Penataan HPP & Cost Control",
-                amount = 7500000,
-                issueDate = "15 Feb 2026",
-                dueDate = "22 Feb 2026",
-                isPaid = true
-            ),
-            InvoiceItem(
-                id = "inv-3",
-                invoiceNumber = "INV/2026/03/014",
-                serviceName = "Term 2: Project Tax Health Check & Advisory",
-                amount = 5000000,
-                issueDate = "01 Mar 2026",
-                dueDate = "15 Mar 2026",
-                isPaid = false
             )
         )
     }
@@ -430,45 +316,9 @@ class AdvisoryRepository {
                         )
                         if (_registeredUsers.none { it.email.lowercase() == fetchedUser.email.lowercase() }) {
                             _registeredUsers.add(fetchedUser)
+                            dbHelper?.insertUser(fetchedUser)
                         }
                     }
-                }
-
-                // 2. Sync Experts from Supabase
-                val jsonExperts = SupabaseClient.get("experts")
-                if (jsonExperts.length() > 0) {
-                    val fetchedExperts = mutableListOf<Expert>()
-                    for (i in 0 until jsonExperts.length()) {
-                        val obj = jsonExperts.getJSONObject(i)
-                        val pPillarStr = obj.optString("primary_pillar", "ACCOUNTING")
-                        val primaryPillar = try { PillarType.valueOf(pPillarStr) } catch (_: Exception) { PillarType.ACCOUNTING }
-
-                        val secStr = obj.optString("secondary_pillars", "")
-                        val secPillars = secStr.split(",").mapNotNull {
-                            try { PillarType.valueOf(it.trim()) } catch (_: Exception) { null }
-                        }
-
-                        val certsStr = obj.optString("certifications", "")
-                        val certsList = certsStr.split(",").map { it.trim() }
-
-                        fetchedExperts.add(
-                            Expert(
-                                id = obj.optString("id", "exp-$i"),
-                                name = obj.optString("name", "Konsultan Expert"),
-                                title = obj.optString("title", "Advisory Specialist"),
-                                primaryPillar = primaryPillar,
-                                secondaryPillars = secPillars,
-                                yearsExperience = obj.optInt("years_experience", 10),
-                                rating = obj.optDouble("rating", 5.0),
-                                reviewCount = obj.optInt("review_count", 50),
-                                bio = obj.optString("bio", ""),
-                                certifications = certsList,
-                                hourlyRate = obj.optDouble("hourly_rate", 500000.0),
-                                isAvailable = obj.optBoolean("is_available", true)
-                            )
-                        )
-                    }
-                    _experts.value = fetchedExperts
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -476,14 +326,33 @@ class AdvisoryRepository {
         }
     }
 
-    // Auth Actions: Pure Supabase Cloud Verification
+    // Auth Actions: Internal Local Database (SQLite) + Fallback
 
     suspend fun loginUserOnline(email: String, pass: String): Boolean = withContext(Dispatchers.IO) {
         val trimmedEmail = email.trim()
         if (trimmedEmail.isBlank() || pass.isBlank()) return@withContext false
 
+        // 1. First Check Internal Local SQLite Database
+        val localUser = dbHelper?.getUserByEmail(trimmedEmail)
+        if (localUser != null) {
+            _currentUser.value = localUser
+            _isLoggedIn.value = true
+            loadDataForUser(localUser)
+            return@withContext true
+        }
+
+        // 2. Memory check
+        val memUser = _registeredUsers.find { it.email.equals(trimmedEmail, ignoreCase = true) }
+        if (memUser != null) {
+            _currentUser.value = memUser
+            _isLoggedIn.value = true
+            dbHelper?.insertUser(memUser)
+            loadDataForUser(memUser)
+            return@withContext true
+        }
+
+        // 3. Supabase Cloud Fallback
         try {
-            // 1. Query Supabase directly for user with this email
             val jsonUsers = SupabaseClient.get("users", "email=eq.$trimmedEmail")
             if (jsonUsers.length() > 0) {
                 val userObj = jsonUsers.getJSONObject(0)
@@ -495,12 +364,13 @@ class AdvisoryRepository {
                     phone = userObj.optString("phone", ""),
                     industry = userObj.optString("industry", "Umum")
                 )
+                _registeredUsers.add(profile)
+                dbHelper?.insertUser(profile)
                 _currentUser.value = profile
                 _isLoggedIn.value = true
                 loadDataForUser(profile)
                 true
             } else {
-                // Email not found in Supabase!
                 false
             }
         } catch (e: Exception) {
@@ -531,9 +401,12 @@ class AdvisoryRepository {
             _registeredUsers.add(profile)
             _currentUser.value = profile
             _isLoggedIn.value = true
+
+            // Save to Internal Local SQLite Database
+            dbHelper?.insertUser(profile)
             loadDataForUser(profile)
 
-            // Sync user to Supabase
+            // Sync user to Supabase Cloud asynchronously
             repositoryScope.launch {
                 try {
                     val json = JSONObject()
@@ -592,21 +465,13 @@ class AdvisoryRepository {
 
         _freeQuestions.value = listOf(newQ) + _freeQuestions.value
 
-        // Post to Supabase
+        // Save to Internal Local SQLite Database
+        dbHelper?.insertFreeQuestion(newQ)
+
+        // Post to Supabase Cloud
         repositoryScope.launch {
             try {
                 val currentUserId = _currentUser.value?.id ?: "usr-1"
-                _currentUser.value?.let { user ->
-                    val userJson = JSONObject()
-                    userJson.put("id", user.id)
-                    userJson.put("full_name", user.fullName)
-                    userJson.put("company_name", user.companyName)
-                    userJson.put("email", user.email)
-                    userJson.put("phone", user.phone)
-                    userJson.put("industry", user.industry)
-                    SupabaseClient.post("users", userJson)
-                }
-
                 val json = JSONObject()
                 json.put("id", questionId)
                 json.put("user_id", currentUserId)
@@ -650,21 +515,13 @@ class AdvisoryRepository {
         )
         _bookings.value = listOf(newBooking) + _bookings.value
 
-        // Post booking to Supabase
+        // Save to Internal Local SQLite Database
+        dbHelper?.insertBooking(newBooking)
+
+        // Post booking to Supabase Cloud
         repositoryScope.launch {
             try {
                 val currentUserId = _currentUser.value?.id ?: "usr-1"
-                _currentUser.value?.let { user ->
-                    val userJson = JSONObject()
-                    userJson.put("id", user.id)
-                    userJson.put("full_name", user.fullName)
-                    userJson.put("company_name", user.companyName)
-                    userJson.put("email", user.email)
-                    userJson.put("phone", user.phone)
-                    userJson.put("industry", user.industry)
-                    SupabaseClient.post("users", userJson)
-                }
-
                 val json = JSONObject()
                 json.put("id", bookingId)
                 json.put("user_id", currentUserId)

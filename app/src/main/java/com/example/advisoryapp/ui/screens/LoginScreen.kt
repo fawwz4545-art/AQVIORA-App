@@ -55,7 +55,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.advisoryapp.data.AuthPreferences
 import com.example.advisoryapp.ui.AdvisoryViewModel
-import com.example.advisoryapp.ui.components.GroupProfileCard
 import com.example.advisoryapp.ui.theme.AdvisoryAppTheme
 import kotlinx.coroutines.launch
 
@@ -259,11 +258,7 @@ fun LoginScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        GroupProfileCard()
-
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Belum memiliki akun bisnis?", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
