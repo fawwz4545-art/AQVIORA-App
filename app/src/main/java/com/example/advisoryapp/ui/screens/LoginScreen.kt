@@ -102,7 +102,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "Masuk ke Portal AQVIORA App Advisory",
+            text = "Masuk ke Portal VPL Consulting Advisory",
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

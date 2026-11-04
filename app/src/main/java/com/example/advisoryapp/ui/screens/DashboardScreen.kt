@@ -109,7 +109,7 @@ fun DashboardScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "AQVIORA App CLIENT PORTAL",
+                            text = "VPL CONSULTING CLIENT PORTAL",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.tertiary,

@@ -105,7 +105,7 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "Buat akun portal AQVIORA App Advisory akuntansi, pajak & kontrol internal",
+            text = "Buat akun portal VPL Consulting Advisory akuntansi, pajak & kontrol internal",
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

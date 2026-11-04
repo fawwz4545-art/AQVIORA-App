@@ -109,7 +109,7 @@ fun HomeScreen(
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "AQVIORA App ADVISORY",
+                            text = "VPL CONSULTING ADVISORY",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.tertiary,
