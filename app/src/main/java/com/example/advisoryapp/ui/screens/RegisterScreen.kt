@@ -56,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.advisoryapp.ui.AdvisoryViewModel
+import com.example.advisoryapp.ui.components.VplLogo
 import com.example.advisoryapp.ui.theme.AdvisoryAppTheme
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -89,21 +90,8 @@ fun RegisterScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // App Logo Icon
-        Box(
-            modifier = Modifier
-                .size(60.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Shield,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(32.dp)
-            )
-        }
+        // VPL Consulting Logo
+        VplLogo(modifier = Modifier.size(70.dp))
 
         Spacer(modifier = Modifier.height(12.dp))
 

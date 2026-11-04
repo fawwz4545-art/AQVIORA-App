@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.advisoryapp.data.AuthPreferences
 import com.example.advisoryapp.ui.AdvisoryViewModel
+import com.example.advisoryapp.ui.components.VplLogo
 import com.example.advisoryapp.ui.theme.AdvisoryAppTheme
 import kotlinx.coroutines.launch
 
@@ -86,21 +87,8 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // App Logo Icon
-        Box(
-            modifier = Modifier
-                .size(70.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Shield,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(36.dp)
-            )
-        }
+        // VPL Consulting Logo
+        VplLogo(modifier = Modifier.size(80.dp))
 
         Spacer(modifier = Modifier.height(16.dp))
 

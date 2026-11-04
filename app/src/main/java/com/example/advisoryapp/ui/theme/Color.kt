@@ -3,9 +3,9 @@ package com.example.advisoryapp.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // Light Theme Colors
-val ExecutiveNavy = Color(0xFF0B132B)
+val ExecutiveNavy = Color(0xFF035BF9)
 val ExecutiveBlue = Color(0xFF1C2541)
-val AccentTeal = Color(0xFF00B4D8)
+val AccentTeal = Color(0xFF0849BD)
 val AccentCyan = Color(0xFF90E0EF)
 
 val EmeraldGreen = Color(0xFF2A9D8F)

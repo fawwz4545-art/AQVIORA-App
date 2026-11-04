@@ -5,46 +5,86 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Outer Shield / Diamond Frame (Governance & Advisory) -->
+    <!-- Blue Emblem Box (VPL Container with rounded corner) -->
     <path
-        android:fillColor="#00000000"
-        android:strokeColor="#00B4D8"
-        android:strokeWidth="3.5"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M54,28 L78,44 L78,66 L54,82 L30,66 L30,44 Z" />
+        android:fillColor="#035BF9"
+        android:pathData="M28,24 H80 V58 C80,63.5 75.5,68 70,68 H28 V24 Z" />
 
-    <!-- Bar 1: Accounting (Teal) -->
-    <path
-        android:fillColor="#00B4D8"
-        android:pathData="M40,58 h6 v14 h-6 z" />
-
-    <!-- Bar 2: Tax & Control (Teal Accent) -->
-    <path
-        android:fillColor="#90E0EF"
-        android:pathData="M51,48 h6 v24 h-6 z" />
-
-    <!-- Bar 3: Growth & Audit (Golden Amber) -->
-    <path
-        android:fillColor="#E9C46A"
-        android:pathData="M62,38 h6 v34 h-6 z" />
-
-    <!-- Top Sparkle / Verification Check Star (Gold) -->
-    <path
-        android:fillColor="#E9C46A"
-        android:pathData="M54,33 L55.5,37.5 L60,39 L55.5,40.5 L54,45 L52.5,40.5 L48,39 L52.5,37.5 Z" />
-
-    <!-- Growth Trendline Arrow -->
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#FFFFFF"
-        android:strokeWidth="3"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M38,62 L48,52 L56,56 L68,42" />
-
+    <!-- White Monogram V Cut -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M68,42 L63,43 L67,48 Z" />
+        android:pathData="M28,30 L42,58 L52,38 H46 L42,48 L34,30 H28 Z" />
+
+    <!-- White Monogram P & L Curve -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M52,30 H66 C70.4,30 74,33.6 74,38 C74,42.4 70.4,46 66,46 H58 V62 H74 V68 H52 V30 Z M58,35 V41 H66 C67.7,41 69,39.7 69,38 C69,36.3 67.7,35 66,35 H58 Z" />
+
+    <!-- VPL Text Below Emblem -->
+    <!-- V -->
+    <path
+        android:fillColor="#035BF9"
+        android:pathData="M32,74 L37,85 L42,74 H45 L38,89 H36 L29,74 H32 Z" />
+
+    <!-- P -->
+    <path
+        android:fillColor="#035BF9"
+        android:pathData="M48,74 H55 C58,74 60,75.5 60,78 C60,80.5 58,82 55,82 H51 V89 H48 V74 Z M51,76 V80 H55 C56.5,80 57.5,79.2 57.5,78 C57.5,76.8 56.5,76 55,76 H51 Z" />
+
+    <!-- L -->
+    <path
+        android:fillColor="#035BF9"
+        android:pathData="M63,74 H66 V86 H74 V89 H63 V74 Z" />
+
+    <!-- CONSULTING Spaced Subtitle Text -->
+    <!-- C -->
+    <path
+        android:fillColor="#035BF9"
+        android:pathData="M30,93 C28.5,93 27.5,94 27.5,95.5 C27.5,97 28.5,98 30,98 H31.5 V97 H30 C29.2,97 28.7,96.3 28.7,95.5 C28.7,94.7 29.2,94 30,94 H31.5 V93 H30 Z" />
+
+    <!-- O -->
+    <path
+        android:fillColor="#035BF9"
+        android:pathData="M35,93 C33.5,93 32.5,94 32.5,95.5 C32.5,97 33.5,98 35,98 C36.5,98 37.5,97 37.5,95.5 C37.5,94 36.5,93 35,93 Z M35,94 C35.8,94 36.3,94.7 36.3,95.5 C36.3,96.3 35.8,97 35,97 C34.2,97 33.7,96.3 33.7,95.5 C33.7,94.7 34.2,94 35,94 Z" />
+
+    <!-- N -->
+    <path
+        android:fillColor="#035BF9"
+        android:pathData="M39,93 H40.2 L43,96.5 V93 H44 V98 H42.8 L40,94.5 V98 H39 V93 Z" />
+
+    <!-- S -->
+    <path
+        android:fillColor="#035BF9"
+        android:pathData="M47,93 H45.5 V95.2 H47 C47.5,95.2 47.8,95.5 47.8,95.8 C47.8,96.1 47.5,96.4 47,96.4 H45.5 V98 H47.2 C48.2,98 49,97.2 49,96.2 C49,95.2 48.2,94.4 47.2,94.4 C47.7,94.4 48.2,94 48.2,93.4 C48.2,92.8 47.7,93 47,93 Z" />
+
+    <!-- U -->
+    <path
+        android:fillColor="#035BF9"
+        android:pathData="M50.5,93 H51.7 V96.5 C51.7,97 52.2,97.3 52.7,97.3 C53.2,97.3 53.7,97 53.7,96.5 V93 H54.9 V96.5 C54.9,97.5 54,98.2 52.7,98.2 C51.4,98.2 50.5,97.5 50.5,96.5 V93 Z" />
+
+    <!-- L -->
+    <path
+        android:fillColor="#035BF9"
+        android:pathData="M56.5,93 H57.7 V97 H60.5 V98 H56.5 V93 Z" />
+
+    <!-- T -->
+    <path
+        android:fillColor="#035BF9"
+        android:pathData="M62,93 H66 V94 H64.6 V98 H63.4 V94 H62 V93 Z" />
+
+    <!-- I -->
+    <path
+        android:fillColor="#035BF9"
+        android:pathData="M67.5,93 H68.7 V98 H67.5 V93 Z" />
+
+    <!-- N -->
+    <path
+        android:fillColor="#035BF9"
+        android:pathData="M70,93 H71.2 L74,96.5 V93 H75 V98 H73.8 L71,94.5 V98 H70 V93 Z" />
+
+    <!-- G -->
+    <path
+        android:fillColor="#035BF9"
+        android:pathData="M78,93 C76.5,93 75.5,94 75.5,95.5 C75.5,97 76.5,98 78,98 C79.2,98 79.8,97.2 79.8,96 V95.5 H78 V96.5 H78.8 C78.7,97 78.3,97.2 78,97.2 C77.2,97.2 76.7,96.5 76.7,95.5 C76.7,94.5 77.2,93.8 78,93.8 C78.5,93.8 79,94 79.2,94.5 L80,93.8 C79.6,93.3 78.9,93 78,93 Z" />
 
 </vector>
