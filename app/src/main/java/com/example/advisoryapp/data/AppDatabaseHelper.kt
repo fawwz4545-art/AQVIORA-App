@@ -4,15 +4,9 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.example.advisoryapp.model.ActionItem
 import com.example.advisoryapp.model.BookingRequest
-import com.example.advisoryapp.model.ClientProject
-import com.example.advisoryapp.model.DocumentItem
 import com.example.advisoryapp.model.Expert
 import com.example.advisoryapp.model.FreeQuestion
-import com.example.advisoryapp.model.HealthResult
-import com.example.advisoryapp.model.HealthStatus
-import com.example.advisoryapp.model.InvoiceItem
 import com.example.advisoryapp.model.PillarType
 import com.example.advisoryapp.model.UserProfile
 
@@ -147,7 +141,7 @@ class AppDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_N
         }
     }
 
-    // CRUD Operations for Internal Local Database
+    // CRUD Operations for Internal Local Database (Create, Read, Update, Delete)
 
     fun insertUser(user: UserProfile): Boolean {
         val db = writableDatabase
@@ -259,6 +253,11 @@ class AppDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_N
         return list
     }
 
+    fun deleteFreeQuestion(questionId: String): Int {
+        val db = writableDatabase
+        return db.delete("free_questions", "id = ?", arrayOf(questionId))
+    }
+
     fun insertBooking(booking: BookingRequest): Boolean {
         val db = writableDatabase
         val cv = ContentValues().apply {
@@ -295,5 +294,10 @@ class AppDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_N
         }
         cursor.close()
         return list
+    }
+
+    fun deleteBooking(bookingId: String): Int {
+        val db = writableDatabase
+        return db.delete("booking_requests", "id = ?", arrayOf(bookingId))
     }
 }
