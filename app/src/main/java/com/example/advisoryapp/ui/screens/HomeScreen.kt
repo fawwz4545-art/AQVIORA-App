@@ -48,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.advisoryapp.model.FreeQuestion
@@ -55,6 +56,7 @@ import com.example.advisoryapp.model.PillarType
 import com.example.advisoryapp.model.ServiceLadderLevel
 import com.example.advisoryapp.ui.AdvisoryViewModel
 import com.example.advisoryapp.ui.components.PillarCard
+import com.example.advisoryapp.ui.theme.AdvisoryAppTheme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -458,5 +460,17 @@ fun HomeScreen(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    AdvisoryAppTheme {
+        HomeScreen(
+            viewModel = AdvisoryViewModel(),
+            onNavigateToDiagnostic = {},
+            onNavigateToExperts = {}
+        )
     }
 }

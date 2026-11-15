@@ -57,10 +57,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.advisoryapp.ui.AdvisoryViewModel
 import com.example.advisoryapp.ui.components.HealthBadge
+import com.example.advisoryapp.ui.theme.AdvisoryAppTheme
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -905,5 +907,15 @@ fun KpiSummaryBadge(
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DashboardScreenPreview() {
+    AdvisoryAppTheme {
+        DashboardScreen(
+            viewModel = AdvisoryViewModel()
+        )
     }
 }

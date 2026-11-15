@@ -53,11 +53,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.advisoryapp.model.Expert
 import com.example.advisoryapp.model.PillarType
 import com.example.advisoryapp.ui.AdvisoryViewModel
+import com.example.advisoryapp.ui.theme.AdvisoryAppTheme
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -439,6 +441,16 @@ fun ExpertsScreen(
                     Text("Selesai", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
                 }
             }
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ExpertsScreenPreview() {
+    AdvisoryAppTheme {
+        ExpertsScreen(
+            viewModel = AdvisoryViewModel()
         )
     }
 }

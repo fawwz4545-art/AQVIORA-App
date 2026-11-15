@@ -50,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.advisoryapp.model.HealthResult
@@ -57,6 +58,7 @@ import com.example.advisoryapp.model.HealthStatus
 import com.example.advisoryapp.model.PillarType
 import com.example.advisoryapp.ui.AdvisoryViewModel
 import com.example.advisoryapp.ui.components.HealthBadge
+import com.example.advisoryapp.ui.theme.AdvisoryAppTheme
 
 data class DiagnosticQuestionItem(
     val pillar: PillarType,
@@ -437,5 +439,16 @@ fun DiagnosticScreen(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DiagnosticScreenPreview() {
+    AdvisoryAppTheme {
+        DiagnosticScreen(
+            viewModel = AdvisoryViewModel(),
+            onNavigateToExperts = {}
+        )
     }
 }
