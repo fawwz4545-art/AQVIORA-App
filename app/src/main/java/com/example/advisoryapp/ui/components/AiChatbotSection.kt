@@ -20,9 +20,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Psychology
+import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.SupportAgent
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -79,7 +78,7 @@ fun AiChatbotSection(
         mutableStateListOf(
             ChatMessage(
                 isUser = false,
-                text = "Halo! Saya AQVIORA AI Business Assistant 🤖. Tanyakan masalah akuntansi, pajak, HPP, atau kontrol internal bisnis Anda secara gratis!",
+                text = "Halo! Saya AQVIORA Business Assistant. Tanyakan masalah akuntansi, pajak, HPP, atau kontrol internal bisnis Anda secara gratis!",
                 category = PillarType.ACCOUNTING
             )
         )
@@ -101,7 +100,7 @@ fun AiChatbotSection(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
-            // Header AI Chatbot
+            // Header Business Assistant Chatbot
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -116,17 +115,17 @@ fun AiChatbotSection(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Psychology,
+                            imageVector = Icons.Default.SupportAgent,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(22.dp)
                         )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "AQVIORA AI Business Assistant",
+                                text = "AQVIORA Business Assistant",
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -139,7 +138,7 @@ fun AiChatbotSection(
                             )
                         }
                         Text(
-                            text = "Online • Menjawab masalah finansial 24/7",
+                            text = "Online • Layanan Tanya Gratis Advisory 24/7",
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -179,7 +178,7 @@ fun AiChatbotSection(
                             }
                         }
                     } else {
-                        // AI Chat Bubble (Left)
+                        // Assistant Chat Bubble (Left)
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Start
@@ -192,7 +191,7 @@ fun AiChatbotSection(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.AutoAwesome,
+                                    imageVector = Icons.Default.Shield,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(16.dp)
@@ -259,7 +258,7 @@ fun AiChatbotSection(
                     }
                 }
 
-                // AI Typing Indicator
+                // Assistant Typing Indicator
                 AnimatedVisibility(visible = isAiTyping) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -273,7 +272,7 @@ fun AiChatbotSection(
                                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.Shield, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Row(
@@ -285,7 +284,7 @@ fun AiChatbotSection(
                         ) {
                             CircularProgressIndicator(modifier = Modifier.size(14.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.primary)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("AQVIORA AI sedang menganalisis...", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("Asisten Advisory sedang menganalisis...", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
@@ -293,8 +292,8 @@ fun AiChatbotSection(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // AI Prompts Suggestion Chips
-            Text("Prompts Pertanyaan Cepat AI:", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            // Quick Prompts Suggestion Chips
+            Text("Pilihan Pertanyaan Cepat:", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(4.dp))
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -313,12 +312,12 @@ fun AiChatbotSection(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Input Text Box with AI Send Button
+            // Input Text Box with Send Button
             OutlinedTextField(
                 value = questionInput,
                 onValueChange = { questionInput = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Tanyakan masalah bisnis Anda ke AI...", fontSize = 12.sp) },
+                placeholder = { Text("Tuliskan pertanyaan masalah bisnis Anda...", fontSize = 12.sp) },
                 maxLines = 3,
                 shape = RoundedCornerShape(14.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -335,7 +334,7 @@ fun AiChatbotSection(
                                 isAiTyping = true
 
                                 coroutineScope.launch {
-                                    delay(1000) // Realistic AI thinking delay
+                                    delay(1000) // Realistic thinking delay
                                     val aiResult: FreeQuestion = viewModel.submitQuestion(userQ)
                                     isAiTyping = false
                                     chatMessages.add(
@@ -352,7 +351,7 @@ fun AiChatbotSection(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Kirim ke AI",
+                            contentDescription = "Kirim",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
