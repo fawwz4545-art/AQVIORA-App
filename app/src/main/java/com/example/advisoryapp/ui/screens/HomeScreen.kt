@@ -55,6 +55,7 @@ import com.example.advisoryapp.model.FreeQuestion
 import com.example.advisoryapp.model.PillarType
 import com.example.advisoryapp.model.ServiceLadderLevel
 import com.example.advisoryapp.ui.AdvisoryViewModel
+import com.example.advisoryapp.ui.components.AiChatbotSection
 import com.example.advisoryapp.ui.components.FreeCalculatorsSection
 import com.example.advisoryapp.ui.components.PillarCard
 import com.example.advisoryapp.ui.theme.AdvisoryAppTheme
@@ -67,17 +68,6 @@ fun HomeScreen(
     onNavigateToExperts: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val freeQuestions by viewModel.freeQuestions.collectAsState()
-    var questionInput by remember { mutableStateOf("") }
-    var latestAnswer by remember { mutableStateOf<FreeQuestion?>(null) }
-
-    val samplePrompts = listOf(
-        "Omzet naik tetapi laba bersih turun?",
-        "Bagaimana menghitung HPP restoran/pabrik?",
-        "Apakah transaksi vendor perorangan kena PPh?",
-        "Bagaimana cara membuat approval matrix kas?",
-        "Apakah perusahaan kami butuh Internal Audit?"
-    )
 
     LazyColumn(
         modifier = modifier
@@ -139,234 +129,13 @@ fun HomeScreen(
             }
         }
 
-        // TANYA GRATIS (Free Question Section)
+        // AQVIORA AI BUSINESS ASSISTANT CHATBOT SECTION
         item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(modifier = Modifier.padding(18.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Help,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column {
-                            Text(
-                                text = "Tanya Gratis Masalah Bisnis",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = "Konsultasi singkat gratis mengenai akuntansi & pajak",
-                                fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    OutlinedTextField(
-                        value = questionInput,
-                        onValueChange = { questionInput = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Tuliskan pertanyaan masalah bisnis Anda...", fontSize = 13.sp) },
-                        maxLines = 3,
-                        shape = RoundedCornerShape(14.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
-                        ),
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    if (questionInput.isNotBlank()) {
-                                        latestAnswer = viewModel.submitQuestion(questionInput)
-                                        questionInput = ""
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Send,
-                                    contentDescription = "Kirim",
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Text(
-                        text = "Contoh Pertanyaan Cepat:",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        samplePrompts.forEach { prompt ->
-                            SuggestionChip(
-                                onClick = { questionInput = prompt },
-                                label = { Text(prompt, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface) },
-                                colors = SuggestionChipDefaults.suggestionChipColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // Instant Answer Output
-        item {
-            AnimatedVisibility(visible = latestAnswer != null) {
-                latestAnswer?.let { answer ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(18.dp),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                    ) {
-                        Column(modifier = Modifier.padding(18.dp)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.AutoAwesome,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Jawaban Edukasi Awal",
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = answer.aiBasicAnswer,
-                                fontSize = 13.sp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                lineHeight = 19.sp
-                            )
-                            Spacer(modifier = Modifier.height(14.dp))
-
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-                                    .padding(12.dp)
-                            ) {
-                                Column {
-                                    Text(
-                                        text = answer.ctaText,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                    Spacer(modifier = Modifier.height(10.dp))
-                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                        Button(
-                                            onClick = onNavigateToExperts,
-                                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                                            shape = RoundedCornerShape(10.dp),
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            Text("Konsultasi Expert", fontSize = 11.sp, color = MaterialTheme.colorScheme.onPrimary)
-                                        }
-                                        Button(
-                                            onClick = onNavigateToDiagnostic,
-                                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
-                                            shape = RoundedCornerShape(10.dp),
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            Text("Self Diagnostic", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSecondary)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Q&A History
-        if (freeQuestions.isNotEmpty()) {
-            item {
-                Text(
-                    text = "Riwayat Pertanyaan Anda",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            items(freeQuestions.take(3)) { item ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(14.dp),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = item.category?.displayName ?: "Umum",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                text = item.timestamp,
-                                fontSize = 10.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = item.questionText,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = item.aiBasicAnswer,
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 2
-                        )
-                    }
-                }
-            }
+            AiChatbotSection(
+                viewModel = viewModel,
+                onNavigateToDiagnostic = onNavigateToDiagnostic,
+                onNavigateToExperts = onNavigateToExperts
+            )
         }
 
         // KALKULATOR BISNIS GRATIS (Free Tools)
