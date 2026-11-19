@@ -314,7 +314,7 @@ class AdvisoryRepository(context: Context? = null) {
                             phone = obj.optString("phone", ""),
                             industry = obj.optString("industry", "Umum")
                         )
-                        if (_registeredUsers.none { it.email.lowercase() == fetchedUser.email.lowercase() }) {
+                        if (_registeredUsers.none { it.email.equals(fetchedUser.email, ignoreCase = true) }) {
                             _registeredUsers.add(fetchedUser)
                             dbHelper?.insertUser(fetchedUser)
                         }
@@ -491,14 +491,69 @@ class AdvisoryRepository(context: Context? = null) {
 
     private fun generateAnswerFor(pillar: PillarType): String {
         return when (pillar) {
-            PillarType.TAX -> "Pertanyaan Anda berkaitan dengan kepatuhan & risiko perpajakan. Secara umum, setiap transaksi wajib ditelaah dasar hukumnya, tarif yang berlaku, serta kesesuaian faktur/bukti potong dengan laporan keuangan."
-            PillarType.COSTING -> "Untuk masalah biaya/HPP, langkah awal adalah memisahkan biaya langsung (Direct Material & Labor) dengan Biaya Overhead Pabrik (BOP), serta menentukan Cost Driver yang relevan per lini produk."
-            PillarType.FINANCE -> "Manajemen arus kas membutuhkan pemisahan rekening operasional vs cadangan, serta pemantauan Cash Conversion Cycle (CCC) agar modal kerja tidak tertahan di piutang atau persediaan."
-            PillarType.BUDGETING -> "Penyusunan anggaran yang efektif dimulai dari Proyeksi Penjualan, dilanjutkan Anggaran Produksi & Operasional, serta evaluasi bulanan melalui Variance Analysis (Actual vs Budget)."
-            PillarType.INTERNAL_CONTROL -> "Pengendalian internal yang sehat memerlukan SOP tertulis yang jelas, Matriks Otorisasi berjenjang, dan Pemisahan Tugas (Segregation of Duties) antara pembuat, pemroses, dan pemberi persetujuan."
-            PillarType.RISK_MANAGEMENT -> "Pengelolaan risiko dilakukan dengan menginventarisir kejadian risiko pada Risk Register, menilai Dampak (Impact) vs Probabilitas (Likelihood), serta menentukan Rencana Mitigasi."
-            PillarType.INTERNAL_AUDIT -> "Internal audit berfungsi memastikan kepatuhan terhadap SOP dan efektifitas pengendalian. Audit berbasis risiko memprioritaskan area bernilai tinggi atau berisiko kebocoran besar."
-            PillarType.ACCOUNTING -> "Pencatatan akuntansi yang akurat berpedoman pada standar akuntansi berlaku (SAK/EMKM). Pastikan kelengkapan dokumen pendukung (voucher/faktur) dan pengakuan jurnal yang konsisten."
+            PillarType.TAX -> """
+• Analisis Kepatuhan & Risiko Pajak (Tax Advisory):
+1. Identifikasi Transaksi: Pastikan seluruh bukti transaksi penjualan/jasa memiliki Faktur Pajak dan Bukti Potong PPh yang sesuai.
+2. Skala & Regulasi: Untuk UMKM, dapat memanfaatkan tarif PPh Final 0,5% (PP 55/2022) jika omzet < Rp 4,8 Miliar, atau PPh 21/23 untuk jasa vendor.
+3. Ekualisasi Omzet: Lakukan rekonsiliasi bulanan antara Omzet Laporan Keuangan vs SPT Masa PPN/PPh untuk menghindari denda SP2DK.
+👉 Langkah Selanjutnya: Jadwalkan Tax Review bersama Konsultan Pajak BKP kami.
+""".trimIndent()
+
+            PillarType.COSTING -> """
+• Analisis Penataan HPP & Margin Produk (Cost Control):
+1. Pemisahan Biaya Langsung: Pisahkan Biaya Bahan Baku Langsung (Direct Material) & Tenaga Kerja Langsung dari Overhead Pabrik (BOP).
+2. Kalkulasi Cost Driver: Hitung HPP per porsi/unit berdasarkan pemakaian riil bahan baku, bukan sekadar persentase estimasi kasar.
+3. Evaluasi Margin Laba: Omzet naik tetapi laba bersih turun biasanya disebabkan kenaikan HPP bahan baku yang belum disesuaikan ke harga jual, atau promo diskon yang terlalu agresif.
+👉 Langkah Selanjutnya: Susun Standard Costing Sheet bersama Costing Specialist kami.
+""".trimIndent()
+
+            PillarType.FINANCE -> """
+• Manajemen Arus Kas & Modal Kerja (Cash Flow Advisory):
+1. Pemisahan Rekening Kas: Wajib memisahkan rekening kas operasional harian usaha dari rekening tabungan pribadi pemilik usaha.
+2. Rotasi Modal Kerja (CCC): Pantau Cash Conversion Cycle (CCC) serta umur piutang pelanggan agar arus kas tidak mengendap lama.
+3. Cash Flow Forecasting: Susun proyeksi penerimaan dan pengeluaran kas harian 13 minggu ke depan untuk mencegah krisis likuiditas.
+👉 Langkah Selanjutnya: Susun Rolling Cash Flow Forecast bersama Finance Advisor kami.
+""".trimIndent()
+
+            PillarType.BUDGETING -> """
+• Perencanaan & Anggaran Tahunan (Master Budgeting):
+1. Proyeksi Penjualan & Biaya: Susun Anggaran Penjualan (Sales Budget) dan Anggaran Operasional (OPEX) bulanan secara realistis.
+2. Evaluasi Varians Biaya: Lakukan evaluasi bulanan (Variance Analysis) membandingkan realisasi biaya vs anggaran untuk mendeteksi pembengkakan.
+3. Penetapan KPI Anggaran: Tetapkan batas maksimum efisiensi biaya operasional per divisi/cabang.
+👉 Langkah Selanjutnya: Susun Master Budget & Variance Sheet bersama Budgeting Expert kami.
+""".trimIndent()
+
+            PillarType.INTERNAL_CONTROL -> """
+• Pengendalian Internal & SOP Keuangan (Internal Control):
+1. Pemisahan Tugas (SoD): Pisahkan staf yang mencatat transaksi, memegang uang kas, dan memberikan persetujuan pengeluaran.
+2. Matriks Otorisasi Berjenjang: Tetapkan batas nominal approval pengeluaran (misal: < Rp 2 Juta via Spv, > Rp 10 Juta wajib persetujuan Direktur).
+3. SOP Pengeluaran Kas/Bank: Hindari persetujuan lisan/chat WA, wajib menggunakan Voucher Kas Keluar bertanda tangan resmi.
+👉 Langkah Selanjutnya: Susun SOP Keuangan & Approval Matrix bersama Internal Control Advisor kami.
+""".trimIndent()
+
+            PillarType.RISK_MANAGEMENT -> """
+• Identifikasi & Manajemen Risiko Bisnis (Risk Management):
+1. Pemetaan Risiko Operasional: Inventarisir risiko piutang macet, kebocoran stok, dan gangguan operasional ke dalam Risk Register.
+2. Penilaian Dampak vs Probabilitas: Kelompokkan risiko bisnis ke dalam skala High, Medium, atau Low Risk.
+3. Rencana Mitigasi: Tetapkan langkah pencegahan dan prosedur darurat untuk meminimalisir kerugian keuangan.
+👉 Langkah Selanjutnya: Buat Risk Register & Mitigation Plan bersama Risk Advisory Specialist kami.
+""".trimIndent()
+
+            PillarType.INTERNAL_AUDIT -> """
+• Audit Internal & Ketaatan Prosedur (Internal Audit):
+1. Pemeriksaan Berkelanjutan: Lakukan audit independen berkala atas fisik persediaan stok, saldo kas bank, dan ketaatan SOP cabang.
+2. Risk-Based Audit: Prioritaskan pemeriksaan pada area bernilai transaksi tinggi atau area yang rawan terjadi penyimpangan.
+3. Action Plan Audit: Susun laporan rekomendasi perbaikan dan batas waktu penyesuaian bagi manajemen.
+👉 Langkah Selanjutnya: Jadwalkan Internal Audit as a Service bersama Certified Internal Auditor kami.
+""".trimIndent()
+
+            PillarType.ACCOUNTING -> """
+• Pembukuan & Laporan Keuangan Terstandar (Accounting Advisory):
+1. Standar Akuntansi Berlaku: Terapkan pencatatan akuntansi berpatokan pada SAK EMKM / SAK Umum sesuai skala usaha Anda.
+2. Monthly Financial Closing: Targetkan laporan keuangan bulanan (Laba Rugi & Neraca) selesai maksimal H+5 setelah akhir bulan.
+3. Kelengkapan Dokumen Pendukung: Lampirkan faktur, kuitansi, dan voucher pada setiap jurnal transaksi untuk mempermudah audit.
+👉 Langkah Selanjutnya: Rapikan sistem pembukuan & closing checklist bersama Senior Accounting Specialist kami.
+""".trimIndent()
         }
     }
 
