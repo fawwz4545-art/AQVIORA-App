@@ -55,6 +55,7 @@ import com.example.advisoryapp.model.FreeQuestion
 import com.example.advisoryapp.model.PillarType
 import com.example.advisoryapp.model.ServiceLadderLevel
 import com.example.advisoryapp.ui.AdvisoryViewModel
+import com.example.advisoryapp.ui.components.FreeCalculatorsSection
 import com.example.advisoryapp.ui.components.PillarCard
 import com.example.advisoryapp.ui.theme.AdvisoryAppTheme
 
@@ -366,6 +367,13 @@ fun HomeScreen(
                     }
                 }
             }
+        }
+
+        // KALKULATOR BISNIS GRATIS (Free Tools)
+        item {
+            FreeCalculatorsSection(
+                onNavigateToExperts = onNavigateToExperts
+            )
         }
 
         // 8 Pilar Layanan
