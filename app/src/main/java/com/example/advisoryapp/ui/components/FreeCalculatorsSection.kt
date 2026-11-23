@@ -1,7 +1,9 @@
 package com.example.advisoryapp.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,6 +28,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.PrimaryScrollableTabRow
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,7 +54,7 @@ fun FreeCalculatorsSection(
     modifier: Modifier = Modifier
 ) {
     var selectedCalcTab by remember { mutableIntStateOf(0) }
-    val calcTabs = listOf("Laba Bersih", "Pajak UMKM 0.5%", "HPP & Biaya Produksi")
+    val calcTabs = listOf("Kalkulator HPP Kuliner", "Laba Bersih", "Pajak UMKM 0.5%")
 
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.getDefault()) }
 
@@ -79,13 +84,13 @@ fun FreeCalculatorsSection(
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
                     Text(
-                        text = "Kalkulator Bisnis Gratis (Free Tools)",
+                        text = "Kalkulator Bisnis UMKM (Free Tools)",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Hitung laba bersih, PPh UMKM 0,5%, dan HPP per porsi secara gratis",
+                        text = "Hitung HPP porsi kuliner, modal, laba bersih & PPh UMKM gratis",
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -118,12 +123,213 @@ fun FreeCalculatorsSection(
             Spacer(modifier = Modifier.height(14.dp))
 
             when (selectedCalcTab) {
-                // 1. KALKULATOR LABA BERSIH
-                0 -> NetProfitCalculator(currencyFormat, onNavigateToExperts)
-                // 2. KALKULATOR PAJAK UMKM (PP 55/2022)
-                1 -> UmkmTaxCalculator(currencyFormat, onNavigateToExperts)
-                // 3. KALKULATOR HPP & BIAYA PRODUKSI
-                2 -> HppProductionCalculator(currencyFormat, onNavigateToExperts)
+                // 1. KALKULATOR HPP KULINER & MODAL (SESUAI GAMBAR)
+                0 -> HppCulinaryCalculator(currencyFormat, onNavigateToExperts)
+                // 2. KALKULATOR LABA BERSIH
+                1 -> NetProfitCalculator(currencyFormat, onNavigateToExperts)
+                // 3. KALKULATOR PAJAK UMKM (PP 55/2022)
+                2 -> UmkmTaxCalculator(currencyFormat, onNavigateToExperts)
+            }
+        }
+    }
+}
+
+// 1. KALKULATOR HPP KULINER & MIE AYAM (SESUAI GAMBAR USER)
+@Composable
+fun HppCulinaryCalculator(
+    currencyFormat: NumberFormat,
+    onNavigateToExperts: () -> Unit
+) {
+    val priceOptions = listOf(10000.0, 12000.0, 15000.0, 18000.0)
+    var selectedPrice by remember { mutableStateOf(12000.0) }
+
+    var porsiSehariInput by remember { mutableStateOf("30") }
+    var porsiPerKgAyamInput by remember { mutableStateOf("20") }
+
+    val cabaiDaysOptions = listOf(1, 2, 3, 7)
+    var selectedCabaiDays by remember { mutableIntStateOf(3) }
+
+    var showResult by remember { mutableStateOf(false) }
+
+    val porsiSehari = porsiSehariInput.toDoubleOrNull() ?: 0.0
+    val porsiPerKgAyam = porsiPerKgAyamInput.toDoubleOrNull() ?: 1.0
+
+    // Calculations
+    val omzetHarian = selectedPrice * porsiSehari
+    val omzetBulanan = omzetHarian * 30.0
+
+    val biayaAyamHarian = (porsiSehari / porsiPerKgAyam) * 38000.0 // Estimasi Ayam Rp 38rb/kg
+    val biayaCabaiHarian = 40000.0 / selectedCabaiDays
+    val estimasiBiayaBahanHarian = biayaAyamHarian + biayaCabaiHarian + (porsiSehari * 2500.0) // Bumbu/Mie/Mie porsi
+
+    val estimasiHppPerPorsi = if (porsiSehari > 0) estimasiBiayaBahanHarian / porsiSehari else 0.0
+    val labaBersihHarian = omzetHarian - estimasiBiayaBahanHarian
+    val labaBersihBulanan = labaBersihHarian * 30.0
+
+    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        // Q1: Harga jual per porsi
+        Column {
+            Text(
+                text = "1. Harga jual mie ayam / produk per porsi",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            priceOptions.forEach { price ->
+                val isSelected = selectedPrice == price
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { selectedPrice = price }
+                        .padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = isSelected,
+                        onClick = { selectedPrice = price },
+                        colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = currencyFormat.format(price),
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
+
+        // Q2: Rata-rata porsi terjual sehari
+        Column {
+            Text(
+                text = "2. Rata-rata porsi terjual sehari",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(
+                value = porsiSehariInput,
+                onValueChange = { porsiSehariInput = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("30") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                shape = RoundedCornerShape(12.dp)
+            )
+        }
+
+        // Q3: Ayam 1 kg cukup untuk berapa porsi?
+        Column {
+            Text(
+                text = "3. Ayam 1 kg cukup untuk berapa porsi?",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(
+                value = porsiPerKgAyamInput,
+                onValueChange = { porsiPerKgAyamInput = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("20") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                shape = RoundedCornerShape(12.dp)
+            )
+        }
+
+        // Q4: Cabai Rp40.000 biasanya habis dalam berapa hari?
+        Column {
+            Text(
+                text = "4. Cabai Rp40.000 biasanya habis dalam berapa hari?",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            cabaiDaysOptions.forEach { days ->
+                val isSelected = selectedCabaiDays == days
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { selectedCabaiDays = days }
+                        .padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = isSelected,
+                        onClick = { selectedCabaiDays = days },
+                        colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "$days hari",
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
+
+        // Button: Hitung modal dan keuntungan ->
+        Button(
+            onClick = { showResult = true },
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            shape = RoundedCornerShape(24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+        ) {
+            Text("Hitung modal dan keuntungan", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, modifier = Modifier.size(16.dp))
+        }
+
+        // Result Card Output
+        AnimatedVisibility(visible = showResult) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Hasil Simulasi Modal & Keuntungan UMKM Kuliner:",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("Estimasi Omzet Bulanan:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(currencyFormat.format(omzetBulanan), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("Estimasi HPP Bahan per Porsi:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(currencyFormat.format(estimasiHppPerPorsi), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("Estimasi Keuntungan Bersih Bulanan:", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(currencyFormat.format(labaBersihBulanan), fontSize = 15.sp, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.primary)
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(
+                        onClick = onNavigateToExperts,
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Konsultasi Efisiensi HPP dengan Expert", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
             }
         }
     }
@@ -262,103 +468,6 @@ fun UmkmTaxCalculator(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Jadwalkan Tax Review & Perencanaan Pajak", fontSize = 11.sp, fontWeight = FontWeight.Bold)
-        }
-    }
-}
-
-@Composable
-fun HppProductionCalculator(
-    currencyFormat: NumberFormat,
-    onNavigateToExperts: () -> Unit
-) {
-    var bahanBakuInput by remember { mutableStateOf("1500000") }
-    var tenagaKerjaInput by remember { mutableStateOf("500000") }
-    var bopInput by remember { mutableStateOf("300000") }
-    var porsiInput by remember { mutableStateOf("100") }
-
-    val bahan = bahanBakuInput.toDoubleOrNull() ?: 0.0
-    val tenaga = tenagaKerjaInput.toDoubleOrNull() ?: 0.0
-    val bop = bopInput.toDoubleOrNull() ?: 0.0
-    val porsi = porsiInput.toIntOrNull() ?: 1
-
-    val totalBiaya = bahan + tenaga + bop
-    val hppPerUnit = if (porsi > 0) totalBiaya / porsi else 0.0
-    val saranHargaMargin30 = hppPerUnit / 0.7
-    val saranHargaMargin50 = hppPerUnit / 0.5
-
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedTextField(
-                value = bahanBakuInput,
-                onValueChange = { bahanBakuInput = it },
-                label = { Text("Biaya Bahan (Rp)") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(10.dp)
-            )
-            OutlinedTextField(
-                value = tenagaKerjaInput,
-                onValueChange = { tenagaKerjaInput = it },
-                label = { Text("Tenaga Kerja (Rp)") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(10.dp)
-            )
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedTextField(
-                value = bopInput,
-                onValueChange = { bopInput = it },
-                label = { Text("BOP / Kemasan (Rp)") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(10.dp)
-            )
-            OutlinedTextField(
-                value = porsiInput,
-                onValueChange = { porsiInput = it },
-                label = { Text("Jumlah Unit") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(10.dp)
-            )
-        }
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
-        ) {
-            Column(modifier = Modifier.padding(14.dp)) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Total Biaya Produksi:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(currencyFormat.format(totalBiaya), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("HPP per Unit / Porsi:", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                    Text(currencyFormat.format(hppPerUnit), fontSize = 15.sp, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.primary)
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Saran Harga Jual (Margin 30%):", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(currencyFormat.format(saranHargaMargin30), fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                }
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Saran Harga Jual (Margin 50%):", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(currencyFormat.format(saranHargaMargin50), fontSize = 11.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
-                }
-            }
-        }
-
-        Button(
-            onClick = onNavigateToExperts,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            shape = RoundedCornerShape(10.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Konsultasikan Kalkulasi HPP & Standard Costing", fontSize = 11.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
