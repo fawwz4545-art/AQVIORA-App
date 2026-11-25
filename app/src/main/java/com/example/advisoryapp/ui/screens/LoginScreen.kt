@@ -3,7 +3,6 @@ package com.example.advisoryapp.ui.screens
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,13 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -45,7 +42,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -53,6 +49,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.advisoryapp.data.AuthPreferences
 import com.example.advisoryapp.ui.AdvisoryViewModel
 import com.example.advisoryapp.ui.components.VplLogo
@@ -61,10 +58,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    viewModel: AdvisoryViewModel,
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: AdvisoryViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -217,7 +214,7 @@ fun LoginScreen(
                                     AuthPreferences.saveRememberMe(context, rememberMe, emailInput, passwordInput)
                                     onLoginSuccess()
                                 } else {
-                                    errorMessage = "Email belum terdaftar di Supabase Cloud. Silakan buat akun baru."
+                                    errorMessage = "Email belum terdaftar. Silakan buat akun baru."
                                 }
                             }
                         } else {
@@ -238,7 +235,7 @@ fun LoginScreen(
                             strokeWidth = 2.dp
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Memverifikasi ke Supabase...", fontSize = 13.sp)
+                        Text("Memverifikasi Akun...", fontSize = 13.sp)
                     } else {
                         Text("Masuk ke Portal Advisory", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
@@ -263,7 +260,6 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     AdvisoryAppTheme {
         LoginScreen(
-            viewModel = AdvisoryViewModel(),
             onLoginSuccess = {},
             onNavigateToRegister = {}
         )
